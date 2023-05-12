@@ -63,5 +63,11 @@ class animationData():
                                           [0,0,0,0],
                                           [0,0,0,0]]])
         
+        self.LeftLow2RightUp = np.transpose(self.RightLow2LeftUp, axes=(0, 2, 1))[:, ::-1, :]
+        self.LeftUp2RightLow = np.transpose(self.LeftLow2RightUp, axes=(0, 2, 1))[:, ::-1, :]  
+        self.RightUp2LeftLow = np.transpose(self.LeftUp2RightLow, axes=(0, 2, 1))[:, ::-1, :]
+
+
+
     def animeDataTest(self):
         print(self.RightLow2LeftUp)

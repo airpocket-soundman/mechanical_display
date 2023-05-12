@@ -15,7 +15,11 @@ VDisplay = dot_display_sim.VDisplay(dotDisplayWidth, dotDisplayHeight)
 #
 animeLib = animation_data_4x4.animationData()
 
-animationData = animeLib.RightLow2LeftUp
+animationData = np.concatenate([animeLib.RightUp2LeftLow,
+                                animeLib.RightLow2LeftUp,
+                                animeLib.LeftLow2RightUp,
+                                animeLib.LeftUp2RightLow],
+                                axis=0)
 
 
 
