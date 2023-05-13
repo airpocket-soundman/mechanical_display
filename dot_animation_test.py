@@ -22,6 +22,4 @@ animationData = np.concatenate([animeLib.RightUp2LeftLow,
                                 animeLib.LeftUp2RightLow],
                                 axis=0)
 
-
-
 VDisplay.playAnimation(animationData*(2**(8-monoBit)), 10)
