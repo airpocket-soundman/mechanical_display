@@ -103,23 +103,44 @@ class dotsFont5p():
                                  "?"    :   np.array([[1,0,1,0,1],[1,0,1,0,0],[0,1,0,0,0]]),
                                  " "    :   np.array([[0,0,0,0,0],[0,0,0,0,0]])
         }
+        self.dotsFont4pDict = { "sp1"   :   np.array([[0,0,0,0]]),
+                                "0"     :   np.array([[1,1,1,1],[1,0,0,1],[1,1,1,1]]),
+                                "1"     :   np.array([[0,1,0,0],[1,1,1,1]]),
+                                "2"     :   np.array([[1,0,1,1],[1,1,1,1],[1,1,0,1]]),     
+                                "3"     :   np.array([[1,0,0,1],[1,1,0,1],[1,1,1,1]]),
+                                "4"     :   np.array([[1,1,1,0],[0,0,1,0],[1,1,1,1]]),
+                                "5"     :   np.array([[1,1,0,1],[1,1,0,1],[1,0,1,1]]),
+                                "6"     :   np.array([[1,1,1,1],[0,1,0,1],[0,1,1,1]]),
+                                "7"     :   np.array([[1,0,0,0],[1,0,0,0],[1,1,1,1]]),
+                                "8"     :   np.array([[1,1,1,1],[1,1,0,1],[1,1,1,1]]),
+                                "9"     :   np.array([[1,1,1,0],[1,0,1,0],[1,1,1,1]])
+                                }
 
  
 
     def checkFont(self, char):
         print(ord(str(char)))
 
-    def setDotImg(self, text):
+    def setDotImg(self, text, point = 5):
         #print(text)
         dotImage = 1
         for char in text:
             #print(self.dotsFont5pDict[ord(char)])
-            if isinstance(dotImage, int):
-                dotImage = self.dotsFont5pDict[char]
-            else:
-                dotImage = np.concatenate([dotImage,self.dotsFont5pDict[char]])
+            if point == 5:
+                if isinstance(dotImage, int):
+                    dotImage = self.dotsFont5pDict[char]
+                else:
+                    dotImage = np.concatenate([dotImage,self.dotsFont5pDict[char]])
 
-            dotImage = np.concatenate([dotImage,self.dotsFont5pDict["sp1"]])
+                dotImage = np.concatenate([dotImage,self.dotsFont5pDict["sp1"]])
+
+            if point == 4:
+                if isinstance(dotImage, int):
+                    dotImage = self.dotsFont4pDict[char]
+                else:
+                    dotImage = np.concatenate([dotImage,self.dotsFont4pDict[char]])
+
+                dotImage = np.concatenate([dotImage,self.dotsFont4pDict["sp1"]])
 
         dotImage = np.delete(dotImage, -1, axis = 0)
         #print(dotImage)

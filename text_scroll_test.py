@@ -14,7 +14,7 @@ VDisplay = dot_display_sim.VDisplay(dotDisplayWidth, dotDisplayHeight)
 # テキスト＝フォント変換器のインスタンス生成
 font = text2dot.dotsFont5p()
 
-dotImg = font.setDotImg("test document")
+dotImg = font.setDotImg("0123456789",4)
 shape = dotImg.shape[1]
 #print("shape=" + str(shape))
 if dotImg.shape[1] < dotDisplayHeight:
