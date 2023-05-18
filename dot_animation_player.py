@@ -3,9 +3,6 @@ import dot_display_sim
 import animation_data_4x4
 import animation_data_8x8
 
-# dotDisplayの階調(bit数で)
-monoBit = 3
-
 # dotDisplayの解像度定義
 dotDisplayWidth  = 8
 dotDisplayHeight = 8
@@ -22,4 +19,4 @@ animationData = np.concatenate([animeLib.RightUp2LeftLow,
                                 animeLib.LeftUp2RightLow],
                                 axis=0)
 
-VDisplay.playAnimation(animationData*(2**(8-monoBit)), 10)
+VDisplay.playAnimation(animationData, 10)  #(アニメーションデータ(256階調))

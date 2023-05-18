@@ -3,7 +3,7 @@
 
 import numpy as np
 
-class dotsFont5p():
+class dotsFont():
     def __init__(self):
         self.dotsFont5pDict = {  "sp1"  :   np.array([[0,0,0,0,0]]),
                                  "a"    :   np.array([[0,0,1,1,0],[0,1,0,0,1],[0,1,0,0,1],[0,1,1,1,0],[0,0,0,0,1]]),
@@ -60,7 +60,7 @@ class dotsFont5p():
                                  "Y"    :   np.array([[1,0,0,0,0],[0,1,0,0,0],[0,0,1,1,1],[0,1,0,0,0],[1,0,0,0,0]]),
                                  "Z"    :   np.array([[1,0,0,0,1],[1,0,0,1,1],[1,0,1,0,1],[1,1,0,0,1],[1,0,0,0,1]]),
 
-                                 "0"    :   np.array([[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0],[0,1,1,1,0]]),
+                                 "0"    :   np.array([[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]]),
                                  "1"    :   np.array([[0,1,0,0,1],[1,1,1,1,1],[0,0,0,0,1]]),
                                  "2"    :   np.array([[0,1,0,0,1],[1,0,0,1,1],[1,0,1,0,1],[0,1,0,0,1]]),
                                  "3"    :   np.array([[1,0,0,0,1],[1,0,1,0,1],[1,0,1,0,1],[0,1,0,1,0]]),
@@ -116,18 +116,20 @@ class dotsFont5p():
                                 "9"     :   np.array([[1,1,1,0],[1,0,1,0],[1,1,1,1]])
                                 }
 
- 
-
     def checkFont(self, char):
         print(ord(str(char)))
 
+# 受け取ったtextを指定のポイント数のフォントを使ったドットイメージに変換
     def setDotImg(self, text, point = 5):
         #print(text)
-        dotImage = 1
+        dotImage = []
+
+        # textの文字を空白列を追加して連結
         for char in text:
             #print(self.dotsFont5pDict[ord(char)])
             if point == 5:
-                if isinstance(dotImage, int):
+                #if isinstance(dotImage, int):
+                if isinstance(dotImage, list) and not dotImage:
                     dotImage = self.dotsFont5pDict[char]
                 else:
                     dotImage = np.concatenate([dotImage,self.dotsFont5pDict[char]])

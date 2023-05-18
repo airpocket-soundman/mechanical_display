@@ -8,8 +8,8 @@ class VDisplay():
         self.displayHeight = displayHeight
 
 # 仮想ディスプレイ上のドットのサイズとギャップの定義
-        self.dotSize = 20
-        self.dotGap = 4
+        self.dotSize = 30
+        self.dotGap = 5
 
 # 仮想ディスプレイの描画サイズ定義
         self.VImgWidth = (self.dotSize * displayWidth) + (self.dotGap * (displayWidth + 1))
