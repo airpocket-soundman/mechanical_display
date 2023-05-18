@@ -72,5 +72,5 @@ class animationData():
         self.LeftLow2RightUp = self.LeftLow2RightUp * (2**5)
         self.LeftUp2RightLow = self.LeftUp2RightLow * (2**5)
 
-    def animeDataTest(self):
-        print(self.RightLow2LeftUp)
+        self.leftToRight
+
