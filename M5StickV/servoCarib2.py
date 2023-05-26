@@ -3,28 +3,50 @@ import time
 import pca9685
 import servo
 
-print("test")
-
-usCenter=[1500, 1480, 1630, 1620, 1670, 1580, 1500, 1650, 1690, 1470, 1580, 1600, 1510, 1580, 1450, 1550]
-usMax   =[1850, 1850, 2000, 1950, 2000, 1950, 1870, 1990, 2010, 1830, 1930, 1920, 1900, 1900, 1900, 1900]
-usMin   =[1140, 1120, 1250, 1250, 1320, 1250, 1180, 1330, 1310, 1130, 1270, 1220, 1210, 1250, 1090, 1210]
+usCenter=[[1500, 1480, 1630, 1620, 1670, 1580, 1500, 1650, 1690, 1470, 1580, 1600, 1510, 1580, 1450, 1550],
+          [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]]
+usMax   =[[1850, 1850, 2000, 1950, 2000, 1950, 1870, 1990, 2010, 1830, 1930, 1920, 1900, 1900, 1900, 1900],
+          [1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900, 1900]]
+usMin   =[[1140, 1120, 1250, 1250, 1320, 1250, 1180, 1330, 1310, 1130, 1270, 1220, 1210, 1250, 1090, 1210],
+          [1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200, 1200]]
 
 i2c = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
 
 addr = i2c.scan()
 print( "address is :" + str(addr) )
+pcaNum = 2
 
 pca = []
-pca.append(servo.Servos(i2c,address=0x40))
-pca.append(servo.Servos(i2c,address=0x41))
+for i in range(pcaNum):
+    pca.append(servo.Servos(i2c,address=addr[i]))
+    print(addr[i])
 
-for i in range(16):
-    pca[0].position(i, us=usCenter[i])
-time.sleep_ms(1000)
-for i in range(16):
-    pca[0].position(i, us=usCenter[i])
+for i in range(pcaNum):
+    for j in range(16):
+        pca[i].position(j, us=usCenter[i][j])
+        pca[i].release
 time.sleep_ms(1000)
 
+for i in range(pcaNum):
+    for j in range(16):
+        pca[i].position(j, us=usMax[i][j])
+        pca[i].release
+time.sleep_ms(1000)
+
+for i in range(pcaNum):
+    for j in range(16):
+        pca[i].position(j, us=usMin[i][j])
+        pca[i].release
+time.sleep_ms(1000)
+
+for i in range(pcaNum):
+    for j in range(16):
+        pca[i].position(j, us=usCenter[i][j])
+        pca[i].release
+time.sleep_ms(1000)
+
+
+"""
 for i in range(16):
     pca[0].position(i, us=usMax[i])
 time.sleep_ms(1000)
@@ -36,8 +58,8 @@ time.sleep_ms(1000)
 for i in range(16):
     pca[0].position(i, us=usCenter[i])
 time.sleep_ms(1000)
-
-
+"""
+"""
 for i in range(8,12):
     pca[0].position(i, us=usCenter[i])
 
@@ -64,8 +86,8 @@ time.sleep(1)
 
 for i in range(16):
     pca[0].release(i)
-
-
+"""
+"""
 while True:
 #    servo
     for i in range(16):
@@ -141,4 +163,4 @@ while True:
     for i in range(4):
         pca[0].position(i+12,us=usMax[i+12])
     time.sleep_ms(200)
-
+"""
