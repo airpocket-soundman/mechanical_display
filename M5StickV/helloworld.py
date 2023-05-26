@@ -1,11 +1,3 @@
-# Hello World Example
-#
-# Welcome to the MaixPy IDE!
-# 1. Conenct board to computer
-# 2. Select board at the top of MaixPy IDE: `tools->Select Board`
-# 3. Click the connect buttion below to connect board
-# 4. Click on the green run arrow button below to run the script!
-
 import sensor, image, time, lcd
 
 lcd.init(freq=15000000)

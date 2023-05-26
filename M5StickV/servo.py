@@ -3,7 +3,6 @@
 import pca9685
 import math
 
-
 class Servos:
     def __init__(self, i2c, address=0x40, freq=50, min_us=600, max_us=2400,
                  degrees=180):
