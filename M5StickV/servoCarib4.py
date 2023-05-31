@@ -9,11 +9,28 @@ import servo
 UnitLayout = [2,2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 
 #UnitのI2C addressのリスト定義
-UnitIDList = [[64, 65, 66, 67],
-              [68, 69, 70, 71],
-              [72, 73, 74, 75],
-              [76, 77, 78, 79]]
+UnitAddressList = [[64, 65, 66, 67],
+                   [68, 69, 70, 71],
+                   [72, 73, 74, 75],
+                   [76, 77, 78, 79]]
 
+#UnitのIDのリスト定義
+UnitIDList = []
+n = 0
+for i in range(UnitLayout[0]):
+    list=[]
+    for j in range(UnitLayout[1]):
+        list.append(n)
+        n += 1
+    UnitIDList.append(list)
+print("UnitIDList:",UnitIDList)
+
+"""
+UnitIDList = [[ 0,  1,  2,  3],
+              [ 4,  5,  6,  7],
+              [ 8,  9, 10, 11],
+              [12, 13, 14, 15]]
+"""
 """
 UnitID = [[0x40, 0x41, 0x42, 0x43],
           [0x44, 0x45, 0x46, 0x47],
@@ -41,7 +58,10 @@ for i in range(UnitLayout[1]):
         #print(list)
         PixelIDList.append(list)
 
-print(PixelIDList)
+print("PixelIDList:")
+
+for i in range(len(PixelIDList)):
+    print(PixelIDList[i])
 
 # サーボのキャリブレーションデータ 4*4ユニット対応版
 usCenter=[[1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
@@ -120,31 +140,53 @@ pca = []
 #サーボドライバ初期化
 for i in range(UnitLayout[1]):
     for j in range(UnitLayout[0]):
-        pca.append(servo.Servos(i2c, address = UnitIDList[i][j]))
+        pca.append(servo.Servos(i2c, address = UnitAddressList[i][j]))
         print(UnitIDList[i][j])
 
+pca[UnitIDList[0][0]].position(PixelIDList[0][0][1], us=usMax[0][0])
+time.sleep_ms(100)
+pca[UnitIDList[0][0]].position(PixelIDList[0][0][1], us=usCenter[0][0])
+
 
 for i in range(UnitLayout[1]*4):
     for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0].position(PixelIDList[i][j][1], us=usCenter[i][j])
-        pca[PixelIDList[i][j][0].release
+#        print("UnitNo:",i)
+#        print("ServoNo:",PixelIDList[i][j][1])
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usMax[i][j])
+        time.sleep_ms(50)
+#        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
+#        time.sleep_ms(50)
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usCenter[i][j])
+        time.sleep_ms(50)
+        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
+
+for j in range(UnitLayout[1]*4):
+    for i in range(UnitLayout[0]*4):
+#        print("UnitNo:",i)
+#        print("ServoNo:",PixelIDList[i][j][1])
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usMin[i][j])
+        time.sleep_ms(100)
+#        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
+#        time.sleep_ms(50)
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usCenter[i][j])
+        time.sleep_ms(50)
+        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
+"""
+for i in range(UnitLayout[1]*4):
+    for j in range(UnitLayout[0]*4):
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usMax[i][j])
+        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
 time.sleep_ms(1000)
 
 for i in range(UnitLayout[1]*4):
     for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0].position(PixelIDList[i][j][1], us=usMax[i][j])
-        pca[PixelIDList[i][j][0].release
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usMin[i][j])
+        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
 time.sleep_ms(1000)
 
 for i in range(UnitLayout[1]*4):
     for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0].position(PixelIDList[i][j][1], us=usMin[i][j])
-        pca[PixelIDList[i][j][0].release
+        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usCenter[i][j])
+        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
 time.sleep_ms(1000)
-
-for i in range(UnitLayout[1]*4):
-    for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0].position(PixelIDList[i][j][1], us=usCenter[i][j])
-        pca[PixelIDList[i][j][0].release
-time.sleep_ms(1000)
-
+"""
