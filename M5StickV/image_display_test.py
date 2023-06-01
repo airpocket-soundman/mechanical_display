@@ -3,8 +3,6 @@ import time
 import pca9685
 import servo
 
-
-
 class mechanical_display:
     def __init__(self, i2c, Layout = [1, 1]):
 
@@ -114,11 +112,11 @@ class mechanical_display:
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]]
 
-#
-        self.us8def  = []
-        for i in range(8):
-            for j in range(8):
-                print(i,j)
+# 8階調グレースケール用のポジションリストを生成する
+#        self.us8def  = []
+#        for i in range(8):
+#            for j in range(8):
+#                print(i,j)
 
 #サーボドライバ初期化
         self.pca = []
@@ -128,17 +126,53 @@ class mechanical_display:
                 print(self.UnitIDList[i][j])
 
 # imageを表示するメソッド
-    def setImage(img):
+    def setImage(self.img):
         #imgのサイズとdisplayのサイズがマッチするか確認
         #差分を確認
         #変化のあったピクセルだけを動かす
         #リリースする
         print("set image")
 
+# 全てのパネルをセンター位置に移動する
+    def flatPosition(self):
+        print("flat position")
+
+        for i in range(self.UnitLayout[1]*4):
+            for j in range(Layout[0]*4):
+                self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.usCenter[self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
+                time.sleep_ms(50)
+                self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+
+# 全てのパネルを最小位置に移動する
+    def maxPosition(self):
+        print("max position")
+        for i in range(self.UnitLayout[1]*4):
+            for j in range(Layout[0]*4):
+                self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.usMax[self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
+                time.sleep_ms(50)
+                self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+
+# 全てのパネルを最小位置に移動する
+    def minPosition(self):
+        print("min position")
+        for i in range(self.UnitLayout[1]*4):
+            for j in range(Layout[0]*4):
+                self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.usMin[self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
+                time.sleep_ms(50)
+                self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+
 # 全てのサーボをリリースするメソッド
-    def allRelease():
+    def allRelease(self):
         #全てのサーボをリリース
         print("all servo release")
+        for i in range(self.UnitLayout[1]*4):
+            for j in range(Layout[0]*4):
+                self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+
+# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す 
+    def calcUsValue(self, coodinate = [0, 0], bitNum = 8, value = 0  ):
+        print(coodinate,bitNum,value)
+
 
 
 
@@ -152,7 +186,10 @@ i2c = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
 addr = i2c.scan()
 print( "address is :" + str(addr) )
 
+#displayのインスタンス生成
 display = mechanical_display(i2c,Layout)
+
+#フラット位置に移動
 
 for i in range(Layout[1]*4):
     for j in range(Layout[0]*4):
@@ -177,6 +214,16 @@ for j in range(display.UnitLayout[1]*4):
         display.pca[display.PixelIDList[i][j][0]].position(display.PixelIDList[i][j][1], us=display.usCenter[display.PixelIDList[i][j][0]][display.PixelIDList[i][j][1]])
         time.sleep_ms(50)
         display.pca[display.PixelIDList[i][j][0]].release(display.PixelIDList[i][j][1])
+
+print("use method")
+
+display.flatPosition()
+display.maxPosition()
+display.minPosition()
+display.flatPosition()
+display.allRelease()
+
+
 """
 for i in range(UnitLayout[1]*4):
     for j in range(UnitLayout[0]*4):
