@@ -54,7 +54,7 @@ class mechanical_display:
                         [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                         [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                         [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
-    
+
                         [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                         [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                         [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
@@ -126,7 +126,7 @@ class mechanical_display:
                 print(self.UnitIDList[i][j])
 
 # imageを表示するメソッド
-    def setImage(self.img):
+    def setImage(self, img):
         #imgのサイズとdisplayのサイズがマッチするか確認
         #差分を確認
         #変化のあったピクセルだけを動かす
@@ -169,7 +169,7 @@ class mechanical_display:
             for j in range(Layout[0]*4):
                 self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
 
-# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す 
+# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
     def calcUsValue(self, coodinate = [0, 0], bitNum = 8, value = 0  ):
         print(coodinate,bitNum,value)
 
@@ -190,7 +190,7 @@ print( "address is :" + str(addr) )
 display = mechanical_display(i2c,Layout)
 
 #フラット位置に移動
-
+"""
 for i in range(Layout[1]*4):
     for j in range(Layout[0]*4):
 #        print("UnitNo:",i)
@@ -214,12 +214,13 @@ for j in range(display.UnitLayout[1]*4):
         display.pca[display.PixelIDList[i][j][0]].position(display.PixelIDList[i][j][1], us=display.usCenter[display.PixelIDList[i][j][0]][display.PixelIDList[i][j][1]])
         time.sleep_ms(50)
         display.pca[display.PixelIDList[i][j][0]].release(display.PixelIDList[i][j][1])
-
+"""
 print("use method")
 
-display.flatPosition()
+#display.flatPosition()
 display.maxPosition()
 display.minPosition()
+display.flatPosition()
 display.flatPosition()
 display.allRelease()
 
