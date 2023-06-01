@@ -127,6 +127,18 @@ class mechanical_display:
                 self.pca.append(servo.Servos(self.i2c, address = self.UnitAddressList[i][j]))
                 print(self.UnitIDList[i][j])
 
+# imageを表示するメソッド
+    def setImage(img):
+        #imgのサイズとdisplayのサイズがマッチするか確認
+        #差分を確認
+        #変化のあったピクセルだけを動かす
+        #リリースする
+        print("set image")
+
+# 全てのサーボをリリースするメソッド
+    def allRelease():
+        #全てのサーボをリリース
+        print("all servo release")
 
 
 
