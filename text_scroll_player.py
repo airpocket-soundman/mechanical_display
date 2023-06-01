@@ -15,7 +15,7 @@ VDisplay = dot_display_sim.VDisplay(dotDisplayWidth, dotDisplayHeight)
 font = text2dot.dotsFont()
 
 # テキストをDotImageに変換
-dotImg = font.setDotImg("0123456789",5)
+dotImg = font.setDotImg("01:34:56",5)
 
 # dotImageのheightを取得
 shape = dotImg.shape[1]

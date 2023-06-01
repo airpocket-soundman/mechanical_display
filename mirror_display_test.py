@@ -5,7 +5,7 @@ import time
 print(cv2.__version__)
 
 # dotDisplayの解像度定義
-displayWidth = 24
+displayWidth = 16
 displayHeight = 6
 
 # dotDisplay用のイメージデータアレイ定義 
