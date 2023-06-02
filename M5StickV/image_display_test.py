@@ -112,11 +112,36 @@ class mechanical_display:
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]]
 
-# 8階調グレースケール用のポジションリストを生成する
-#        self.us8def  = []
-#        for i in range(8):
-#            for j in range(8):
-#                print(i,j)
+# 3bitグレースケール用のポジションリストを生成する
+        print("3bit GrayScale List generating ")
+        self.us3bitGrayScalePositionList  = []
+        for i in range(4):
+            listUnit = []
+            for j in range(8):
+                listServo = []
+                for k in range(8):
+                    listServo.appnend(int(self.usMin[j][k] + (((self.usCenter[j][k] - self.usMin[j][k]) / 7) * i * 2)))   
+                listUnit.append(listServo)
+            self.us3bitGrayScalePositionList.append(listUnit)
+
+        for i in range(4, 4):
+            listUnit = []
+            for j in range(8):
+                listServo = []
+                for k in range(8):
+                    listServo.appnend(int(self.usCenter[j][k] + (((self.usMax[j][k] - self.usCenter[j][k]) / 7) * i * 2)))   
+                listUnit.append(listServo)
+            self.us3bitGrayScalePositionList.append(listUnit)
+        print("3bit GrayScale List generate complete.")
+        print("unit 0, scale 0")
+        for i in range(8):
+            print(self.us3bitGrayScalePositionList[0][0])
+        print("unit 0, scale 1")
+        for i in range(8):
+            print(self.us3bitGrayScalePositionList[1][0])    
+
+
+        print(i,j)
 
 #サーボドライバ初期化
         self.pca = []
@@ -127,11 +152,33 @@ class mechanical_display:
 
 # imageを表示するメソッド
     def setImage(self, img):
+        
         #imgのサイズとdisplayのサイズがマッチするか確認
+        if (len(img[0]) != (self.UnitLayout[0] * 4)):
+            print("image width unmatched")
+            return
+        elif (len(img[1]) != (self.UnitLayout[1] * 4)):
+            print("image height unmatched")
+            return
+        
         #差分を確認
         #変化のあったピクセルだけを動かす
         #リリースする
+        
+        #とりあえず3bitGrayでもらって表示するだけ
+        for i in range(self.UnitLayout[1]*4):
+            for j in range(Layout[0]*4):
+                self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.us3bitGrayScalePositionList[img[i][j]][self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
+                time.sleep_ms(50)
+                self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
         print("set image")
+
+# 指定ピクセルを表示するメソッド
+    #Valueは3bitGrayに限る
+    def setPixel(self, value, coordinate):
+        x = coordinate[0]
+        y = coordinate[1]
+        set.pca[[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.us3bitGrayScalePositionList[value][x][y])]
 
 # 全てのパネルをセンター位置に移動する
     def flatPosition(self):
@@ -162,12 +209,22 @@ class mechanical_display:
                 self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
 
 # 全てのサーボをリリースするメソッド
-    def allRelease(self):
+    def Release(self, coordinate = 0):
         #全てのサーボをリリース
-        print("all servo release")
-        for i in range(self.UnitLayout[1]*4):
-            for j in range(Layout[0]*4):
-                self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+        if coordinate == 0:
+            print("all servo release")
+            for i in range(self.UnitLayout[1]*4):
+                for j in range(Layout[0]*4):
+                    self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+        else:
+            try:
+                x = coordinate[0]
+                y = coordinate[1]
+                self.pca[self.PixelIDList[x][y][0]].release(self.PixelIDList[x][y][1])
+
+            except:
+                print("image size unmatched")
+
 
 # ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
     def calcUsValue(self, coodinate = [0, 0], bitNum = 8, value = 0  ):
