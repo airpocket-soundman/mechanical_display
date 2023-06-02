@@ -279,25 +279,50 @@ display.maxPosition()
 display.minPosition()
 display.flatPosition()
 display.flatPosition()
-display.allRelease()
+display.Release()
+
+display.setPixcel(0,[0,0])
+time.sleep_ms(100)
+display.setPixcel(1,[0,0])
+time.sleep_ms(100)
+display.setPixcel(2,[0,0])
+time.sleep_ms(100)
+display.setPixcel(3,[0,0])
+time.sleep_ms(100)
+display.setPixcel(4,[0,0])
+time.sleep_ms(100)
+display.setPixcel(5,[0,0])
+time.sleep_ms(100)
+display.setPixcel(6,[0,0])
+time.sleep_ms(100)
+display.setPixcel(7,[0,0])
+time.sleep_ms(100)
+display.setPixcel(8,[0,0])
+time.sleep_ms(100)
+display.setPixcel(9,[0,0])
+time.sleep_ms(100)
+display.setPixcel(10,[0,0])
+time.sleep_ms(100)
+display.setPixcel(11,[0,0])
+time.sleep_ms(100)
+display.setPixcel(12,[0,0])
+time.sleep_ms(100)
+display.setPixcel(13,[0,0])
+time.sleep_ms(100)
+display.setPixcel(14,[0,0])
+time.sleep_ms(100)
+display.setPixcel(15,[0,0])
+display.Release([0,0])
 
 
 """
-for i in range(UnitLayout[1]*4):
-    for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usMax[i][j])
-        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
-time.sleep_ms(1000)
-
-for i in range(UnitLayout[1]*4):
-    for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usMin[i][j])
-        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
-time.sleep_ms(1000)
-
-for i in range(UnitLayout[1]*4):
-    for j in range(UnitLayout[0]*4):
-        pca[PixelIDList[i][j][0]].position(PixelIDList[i][j][1], us=usCenter[i][j])
-        pca[PixelIDList[i][j][0]].release(PixelIDList[i][j][1])
-time.sleep_ms(1000)
+image = [[ 0, 1, 2, 3, 4, 5, 6, 7],
+         [ 1, 2, 3, 4, 5, 6, 7, 8],
+         [ 2, 3, 4, 5, 6, 7, 8, 9],
+         [ 3, 4, 5, 6, 7, 8, 9,10],
+         [ 4, 5, 6, 7, 8, 9,10,11],
+         [ 5, 6, 7, 8, 9,10,11,12],
+         [ 6, 7, 8, 9,10,11,12,13],
+         [ 7, 8, 9,10,11,12,13,14]]
+display.Release()
 """
