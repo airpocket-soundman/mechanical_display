@@ -112,6 +112,29 @@ class mechanical_display:
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]]
 
+
+        #UnitLayoutに合わせたサイズの黒白フラットイメージを生成
+        self.minImage  = []
+        for i in range(self.UnitLayout[0]):
+            list = []
+            for j in range(self.UnitLayout[1]):
+                list.append(0)
+            self.minImage.append
+
+        self.maxImage  = []
+        for i in range(self.UnitLayout[0]):
+            list = []
+            for j in range(self.UnitLayout[1]):
+                list.append(15)
+            self.minImage.append
+
+        self.flatImage = []
+        for i in range(self.UnitLayout[0]):
+            list = []
+            for j in range(self.UnitLayout[1]):
+                list.append(16)
+            self.minImage.append
+
 # 3bitグレースケール用のポジションリストを生成する
         print("3bit GrayScale List generating ")
         self.us3bitGrayScalePositionList  = []
@@ -132,6 +155,10 @@ class mechanical_display:
                     listServo.appnend(int(self.usCenter[j][k] + (((self.usMax[j][k] - self.usCenter[j][k]) / 7) * i * 2)))   
                 listUnit.append(listServo)
             self.us3bitGrayScalePositionList.append(listUnit)
+
+        #9番目にフラット面の座標を追加
+        self.us3bitGrayScalePositionList.append(self.usCenter)
+
         print("3bit GrayScale List generate complete.")
         print("unit 0, scale 0")
         for i in range(8):
@@ -152,7 +179,7 @@ class mechanical_display:
 
 # imageを表示するメソッド
     def setImage(self, img):
-        
+        print("set image")
         #imgのサイズとdisplayのサイズがマッチするか確認
         if (len(img[0]) != (self.UnitLayout[0] * 4)):
             print("image width unmatched")
@@ -162,6 +189,9 @@ class mechanical_display:
             return
         
         #差分を確認
+
+
+
         #変化のあったピクセルだけを動かす
         #リリースする
         
@@ -171,7 +201,8 @@ class mechanical_display:
                 self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.us3bitGrayScalePositionList[img[i][j]][self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
                 time.sleep_ms(50)
                 self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
-        print("set image")
+
+        self.oldImage = img
 
 # 指定ピクセルを表示するメソッド
     #Valueは3bitGrayに限る
@@ -183,30 +214,42 @@ class mechanical_display:
 # 全てのパネルをセンター位置に移動する
     def flatPosition(self):
         print("flat position")
+        self.setImage(self.flatImage)
 
+        """
         for i in range(self.UnitLayout[1]*4):
             for j in range(Layout[0]*4):
                 self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.usCenter[self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
                 time.sleep_ms(50)
                 self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+        """
 
 # 全てのパネルを最小位置に移動する
     def maxPosition(self):
         print("max position")
+        self.setImage(self.minImage)
+
+        """
         for i in range(self.UnitLayout[1]*4):
             for j in range(Layout[0]*4):
                 self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.usMax[self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
                 time.sleep_ms(50)
                 self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
-
+        """
+                
 # 全てのパネルを最小位置に移動する
     def minPosition(self):
         print("min position")
+        self.setImage(self.maxImage)
+
+        """
         for i in range(self.UnitLayout[1]*4):
             for j in range(Layout[0]*4):
                 self.pca[self.PixelIDList[i][j][0]].position(self.PixelIDList[i][j][1], us=self.usMin[self.PixelIDList[i][j][0]][self.PixelIDList[i][j][1]])
                 time.sleep_ms(50)
                 self.pca[self.PixelIDList[i][j][0]].release(self.PixelIDList[i][j][1])
+        """
+        
 
 # 全てのサーボをリリースするメソッド
     def Release(self, coordinate = 0):
@@ -246,8 +289,10 @@ print( "address is :" + str(addr) )
 #displayのインスタンス生成
 display = mechanical_display(i2c,Layout)
 
-#フラット位置に移動
+#flatポジションを表示する。
+display.flatPosition()
 """
+#PCA9685のインスタンスに直接指示を投げることもできる
 for i in range(Layout[1]*4):
     for j in range(Layout[0]*4):
 #        print("UnitNo:",i)
@@ -278,7 +323,7 @@ print("use method")
 display.maxPosition()
 display.minPosition()
 display.flatPosition()
-display.flatPosition()
+
 display.Release()
 
 display.setPixcel(0,[0,0])
