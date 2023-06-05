@@ -1,21 +1,19 @@
-p = 6
-
-class test:
-    def __init__(self,w = 2,h = 2):
-        self.p = 2
-        self.width = w
-        self.height = h
-        print(w,h)
-        self.p +=1
-
-    def addtoW(self, a = 2):
-        self.width = self.width + a
-        print(self.width)
 
 
-obj = test(5, 4)
+
+dic =   {
+            "t" :   [[0,0,0,0],[0,0,0,0]],
+            "e" :   [[1,1,1,1],[1,1,1,1],[1,1,1,1]],
+            "x" :   [[2,2,2,2],[2,2,2,2],[2,2,2,2],[2,2,2,2]]
+        }
+
+def text2image(text):
+    img = []
+    for i in text:
+        for j in range(len(dic[i])):
+
+            img.append(dic[i][j])
+    return img
 
 
-print(obj.width, obj.height)
-obj.addtoW()
-
+print(text2image("text"))
