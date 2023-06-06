@@ -5,6 +5,7 @@ import servo
 
 class mechanical_display:
     def __init__(self, i2c, unit_layout = [1, 1], servo_layout = [4, 4], gray_scale_bit_size = 4):
+        print("mechanical_display initialize")
 
         self.i2c = i2c                                                                              #pca9685と通信するi2c接続のインスタンス
         self.unit_layout = unit_layout                                                              #ディスプレイに使用するユニットのレイアウト[x, y]　x:幅方向 y:縦方向
@@ -21,13 +22,13 @@ class mechanical_display:
             img.append(list)
 
         self.oldImage = img
-        self.setImage(img)
 
 #UnitのI2C addressのリスト定義
         self.UnitAddressList = [[64, 65, 66, 67],
                                 [68, 69, 70, 71],
                                 [72, 73, 74, 75],
                                 [76, 77, 78, 79]]
+        print("UnitAddressList:", self.UnitAddressList)
 
 #UnitのIDのリスト定義
         print("set unit_id_list")
@@ -61,6 +62,7 @@ class mechanical_display:
         print("set display_pixel_id_list")
         self.display_pixel_id_list = []
 
+
         for x in range(self.unit_layout[0]):
             for k in range(self.servo_layout[0]):
                 list = []
@@ -75,9 +77,9 @@ class mechanical_display:
                 self.display_pixel_id_list.append(list)
 
         #生成されたdisplay_pixel_id_listを確認
-        print("display_pixel_id_list:")
-        for i in range(len(self.display_pixel_id_list)):
-            print(self.display_pixel_id_list[i])
+#        print("display_pixel_id_list:")
+#        for i in range(len(self.display_pixel_id_list)):
+#            print(self.display_pixel_id_list[i])
 
 # サーボのキャリブレーションデータ 4*4ユニット対応版
 
@@ -170,19 +172,15 @@ class mechanical_display:
         #9番目にフラット面の座標を追加
         self.gray_scale_position_list.append(self.usCenter)
 
-        print("gray scale position list generate complete.")
-        print("unit 0, scale 7")
-        for i in range(8):
-            print(self.gray_scale_position_list[7][i])
-        print("unit 0, scale 8")
-        for i in range(8):
-            print(self.gray_scale_position_list[8][i])
 
 #サーボドライバ初期化
         self.pca = []
         for i in range(self.unit_layout[1]):
             for j in range(self.unit_layout[0]):
                 self.pca.append(servo.Servos(self.i2c, address = self.UnitAddressList[i][j]))
+
+#　フラット位置表示
+        self.setImage(img)
 
 # imageを表示するメソッド
     def setImage(self, img):
@@ -212,7 +210,7 @@ class mechanical_display:
 
         #setPixel関数に投げてイメージ表示
         for y in range(self.pixel_layout[1]):
-            for x in range(self.pixel_layout[2]):
+            for x in range(self.pixel_layout[0]):
                 print("set pixel",x,y,img[x][y])
                 self.setPixel(img[x][y],[x, y])
 
@@ -223,11 +221,11 @@ class mechanical_display:
         y1 = coordinate[1]
         y2 = coordinate[1]
         print("set pixcel:",value,coordinate)
-        
+
         if (value < -1) and (value > 2 ** self.gray_scale_bit_size):
             print("gray scale value is out of range >",value)
             return
-        
+
         if (coordinate[0] < 0) and (coordinate[0] > self.pixel_layout[0]):
             print("coodinate x is out of range >",coordinate[0])
             return
@@ -245,7 +243,7 @@ class mechanical_display:
 
         else:
             x1 = coordinate[0]
-            x2 = coordinate[0] + 1 
+            x2 = coordinate[0] + 1
             y1 = coordinate[1]
             y2 = coordinate[1] + 1
 
@@ -255,7 +253,10 @@ class mechanical_display:
                         print("release")
                         self.pca[self.display_pixel_id_list[x][y][0]].release(self.display_pixel_id_list[x][y][1])
 
-                    else: 
+                    else:
+                        print("self.display_pixel_id_list[x][y][0]",self.display_pixel_id_list[x][y][0])
+                        print("self.display_pixel_id_list[x][y][1]",self.display_pixel_id_list[x][y][1])
+                        print("self.gray_scale_position_list[value][self.display_pixel_id_list[x][y][0]][self.display_pixel_id_list[x][y][1]]",self.gray_scale_position_list[value][self.display_pixel_id_list[x][y][0]][self.display_pixel_id_list[x][y][1]])
                         self.pca[self.display_pixel_id_list[x][y][0]].position(self.display_pixel_id_list[x][y][1], us=self.gray_scale_position_list[value][self.display_pixel_id_list[x][y][0]][self.display_pixel_id_list[x][y][1]])
                         self.oldImage[x][y] = value
 
@@ -291,7 +292,7 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 self.pca[self.display_pixel_id_list[x][y][0]].position(self.display_pixel_id_list[x][y][1], us=self.usCenter[self.display_pixel_id_list[x][y][0]][self.display_pixel_id_list[x][y][1]])
         """
-                
+
 
 # 全てのパネルを最大位置に移動する
     def maxPosition(self):
@@ -314,7 +315,7 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 self.pca[self.display_pixel_id_list[x][y][0]].position(self.display_pixel_id_list[x][y][1], us=self.usMax[self.display_pixel_id_list[x][y][0]][self.display_pixel_id_list[x][y][1]])
         """
-                
+
 # 全てのパネルを最小位置に移動する
     def minPosition(self):
         print("min position")
@@ -332,7 +333,7 @@ class mechanical_display:
             for y in range(self.pixel_layout[1]):
                 for x in range(self.pixel_layout[0]):
                     self.pca[self.display_pixel_id_list[x][y][0]].release(self.display_pixel_id_list[x][y][1])
-        # 
+        #
         else:
             try:
                 x = coordinate[0]
@@ -350,7 +351,7 @@ class mechanical_display:
     def text2image(self, text):
         for i in text:
             print(text)
-        
+
 
 #テストアニメーションなど======================================================================================================================================
 def wave01():
@@ -543,7 +544,7 @@ def wave01():
 #displayのUnit配置数定義
 unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストとキャリブレーション用データの修正が必要。
 servo_layout = [4, 4]
-gray_scale_bit_size = 8
+gray_scale_bit_size = 1
 
 #I2C　初期化
 i2c = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
@@ -563,7 +564,7 @@ display.setPixel()
 
 #初期化完了====================================================================================================================================================
 
-wave01()
+#wave01()
 
 #display.flatPosition()
 #time.sleep_ms(2000)

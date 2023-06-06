@@ -119,7 +119,7 @@ class mechanical_display:
                         [1050, 1100, 1190, 1080,  1180, 1230, 1100, 1190,  1190, 1260, 1140,  970,  1200, 1100, 1120, 1100],
                         [1200, 1280, 1150, 1040,  1220, 1050, 1170, 1000,  1180, 1070, 1120, 1140,  1150, 1130, 1290, 1130],
 
-                        [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
+                        [1101, 1102, 1103, 1104,  1105, 1101, 1101, 1101,  1101, 1101, 1101, 1101,  1101, 1101, 1101, 1100],
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                         [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
@@ -138,6 +138,7 @@ class mechanical_display:
         # 4bitグレースケール用のポジションリストを生成する
 
         print("4bit GrayScale List generating")
+        print(" ")
         self.us4bitGrayScalePositionList  = []
         for i in range(8):
             listUnit = []
@@ -160,19 +161,13 @@ class mechanical_display:
         #9番目にフラット面の座標を追加
         self.us4bitGrayScalePositionList.append(self.usCenter)
 
-        print("4bit GrayScale List generate complete.")
-        print("unit 0, scale 7")
-        for i in range(8):
-            print(self.us4bitGrayScalePositionList[7][i])
-        print("unit 0, scale 8")
-        for i in range(8):
-            print(self.us4bitGrayScalePositionList[8][i])
-
 #サーボドライバ初期化
+        print("servos sinitialize")
         self.pca = []
-        for i in range(self.unit_layout[1]):
-            for j in range(self.unit_layout[0]):
-                self.pca.append(servo.Servos(self.i2c, address = self.UnitAddressList[i][j]))
+        for x in range(self.unit_layout[0]):
+            for y in range(self.unit_layout[y]):
+                self.pca.append(servo.Servos(self.i2c, address = self.UnitAddressList[x][y]))
+                print(x,y,self.UnitAddressList[x][y])
 
 # imageを表示するメソッド
     def setImage(self, img):
@@ -202,13 +197,37 @@ class mechanical_display:
                 self.usValue([x,y],img[x][y])
         self.oldImage = img
 
-# 指定ピクセルを表示するメソッド
-    #Valueは3bitGrayに限る
-    def setPixel(self, value, coordinate):
+
+    def setPixel(self, coordinate, value):
         x = coordinate[0]
         y = coordinate[1]
-        print("set pixcel:",value,coordinate)
-        self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.us4bitGrayScalePositionList[value][x][y])
+        print("set pixcel:",coordinate,value,self.us4bitGrayScalePositionList[value][self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
+#        self.pca[self.PixelIDList[x-1][y-1][0]].position(self.PixelIDList[x-1][y-1][1], us=self.us4bitGrayScalePositionList[value][self.PixelIDList[x-1][y-1][0]][self.PixelIDList[x-1][y-1][1]])
+        usValue = self.usValue(coordinate, value)
+        self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.us4bitGrayScalePositionList[value][self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
+#        self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us = usValue)
+
+
+# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
+    def usValue(self, coordinate = [0, 0], gray_scale_color = 0):
+        x = coordinate[0]
+        y = coordinate[1]
+        unit_ID  = self.PixelIDList[x][y][0]
+        servo_ID = self.PixelIDList[x][y][1]
+        usCenter = self.usCenter[unit_ID][servo_ID]
+        usMax = self.usMax[unit_ID][servo_ID]
+        usMin = self.usMin[unit_ID][servo_ID]
+        gray_scale_level = 2 ** self.gray_scale_bit_value
+
+        if gray_scale_color < (gray_scale_level / 2):
+            us = int(usMin + (((usCenter - usMin) / (gray_scale_level - 1)) * gray_scale_color * 2))
+        elif gray_scale_color == gray_scale_level:
+            us = usCenter
+        else:
+            us = int(usMax - (((usMax - usCenter) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
+        print("coordinate, unit_ID, servo_ID, glay_scale_color, us", coordinate, unit_ID, servo_ID, gray_scale_color, us)
+        print(" ")
+        return us
 
 # 全てのパネルをセンター位置に移動する
     def flatPosition(self):
@@ -255,24 +274,7 @@ class mechanical_display:
                 print("image size unmatched")
 
 
-# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
-    def usValue(self, coordinate = [0, 0], gray_scale_color = 0  ):
-        x = coordinate[0]
-        y = coordinate[1]
-        unit_ID  = self.PixelIDList[x][y][0]
-        servo_ID = self.PixelIDList[x][y][1]
-        usCenter = self.usCenter[unit_ID][servo_ID]
-        usMax = self.usMax[unit_ID][servo_ID]
-        usMin = self.usMin[unit_ID][servo_ID]
-        gray_scale_level = 2 ** self.gray_scale_bit_value
 
-        if gray_scale_color < (gray_scale_level / 2):
-            us = int(usMin + (((usCenter - usMin) / (gray_scale_level - 1)) * gray_scale_color * 2))
-        elif gray_scale_color == gray_scale_level:
-            us = usCenter
-        else:
-            us = int(usMax - (((usMax - usCenter) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
-        print("coordinate, glay_scale_color, us", coordinate, gray_scale_color, us)
 
 #displayのUnit配置数定義
 unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
@@ -294,6 +296,9 @@ display.flatPosition()
 time.sleep_ms(300)
 
 
+
+
+"""
 l16 = [16,16,16,16,16,16,16,16]
 l15 = [15,15,15,15,15,15,15,15]
 l14 = [14,14,14,14,14,14,14,14]
@@ -488,6 +493,7 @@ display.setImage(image)
 time.sleep_ms(100)
 image = [l16,l16,l16,l16,l16,l16,l16,l16]
 display.setImage(image)
+"""
 
 
 
@@ -495,8 +501,8 @@ display.setImage(image)
 
 
 
-
-
+display.setPixel([0,0],0)
+#display.pca[5].position(5,us = 1100)
 
 
 

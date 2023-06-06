@@ -22,7 +22,7 @@ class mechanical_display:
 
 #UnitのIDのリスト定義
         print("set UnitIDList")
-        self.UnitIDList = []
+        self.unit_ID_list = []
         n = 0
         for y in range(self.unit_layout[1]):
             list = []
@@ -30,17 +30,17 @@ class mechanical_display:
                 print("x,y",x,y)
                 list.append(n)
                 n += 1
-            self.UnitIDList.append(list)
+            self.unit_ID_list.append(list)
 
         temp = []
-        for i in range(len(self.UnitIDList[0])):
+        for i in range(len(self.unit_ID_list[0])):
             list = []
-            for j in self.UnitIDList:
+            for j in self.unit_ID_list:
                 list.append(j[i])
             temp.append(list)
-        self.UnitIDList = temp
+        self.unit_ID_list = temp
 
-        print("UnitIDList:",self.UnitIDList)
+        print("unit_ID_list:",self.unit_ID_list)
 
 #Unit内のPixel位置とサーボIDの対応を定義
         self.UnitPixelIDList = [[ 0,  4,  8, 12],
@@ -48,7 +48,7 @@ class mechanical_display:
                                 [ 2,  6, 10, 14],
                                 [ 3,  7, 11, 15]]
 
-#UnitIDListとUnitPixelIDListから、displayのPixelとUnitID,各ユニットのPixelIDを対応させるPixelIDListを生成する
+#unit_ID_listとUnitPixelIDListから、displayのPixelとUnitID,各ユニットのPixelIDを対応させるPixelIDListを生成する
         print("set PixelIDList")
         self.PixelIDList = []
 
@@ -57,7 +57,7 @@ class mechanical_display:
                 list = []
                 for y in  range(self.unit_layout[1]):
                     print("x,y",x,y)
-                    UnitID = self.UnitIDList[x][y]
+                    UnitID = self.unit_ID_list[x][y]
                     print("UnitID", UnitID)
                     print(self.UnitPixelIDList)
                     for l in range(4):
@@ -176,8 +176,8 @@ class mechanical_display:
 
 # imageを表示するメソッド
     def setImage(self, img):
-        print("set image")
-        print(self.unit_layout[0])
+        #print("set image")
+        #print(self.unit_layout[0])
         #imgのサイズとdisplayのサイズがマッチするか確認
         if len(img) != (self.unit_layout[0] * 4):
             print("image width unmatched")
@@ -196,19 +196,36 @@ class mechanical_display:
         #とりあえず4bitGrayでもらって表示するだけ
         for y in range(self.unit_layout[1]*4):
             for x in range(self.unit_layout[0]*4):
-#                print("set pixel",x,y,img[x][y])
-                self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.us4bitGrayScalePositionList[img[x][y]][self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
-                print("set image us/ coordinate, us",x,y,img[x][y],self.us4bitGrayScalePositionList[img[x][y]][self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
-                self.usValue([x,y],img[x][y])
+                self.setPixel([x,y],img[x][y])
         self.oldImage = img
 
 # 指定ピクセルを表示するメソッド
     #Valueは3bitGrayに限る
-    def setPixel(self, value, coordinate):
+    def setPixel(self, coordinate, value):
         x = coordinate[0]
         y = coordinate[1]
-        print("set pixcel:",value,coordinate)
-        self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.us4bitGrayScalePositionList[value][x][y])
+        usValue = self.usValue(coordinate, value)
+        self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=usValue)
+
+# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
+    def usValue(self, coordinate = [0, 0], gray_scale_color = 0):
+        x = coordinate[0]
+        y = coordinate[1]
+        unit_ID  = self.PixelIDList[x][y][0]
+        servo_ID = self.PixelIDList[x][y][1]
+        usCenter = self.usCenter[unit_ID][servo_ID]
+        usMax = self.usMax[unit_ID][servo_ID]
+        usMin = self.usMin[unit_ID][servo_ID]
+        gray_scale_level = 2 ** self.gray_scale_bit_value
+
+        if gray_scale_color < (gray_scale_level / 2):
+            us = int(usMin + (((usCenter - usMin) / (gray_scale_level - 1)) * gray_scale_color * 2))
+        elif gray_scale_color == gray_scale_level:
+            us = usCenter
+        else:
+            us = int(usMax - (((usMax - usCenter) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
+        return us
+
 
 # 全てのパネルをセンター位置に移動する
     def flatPosition(self):
@@ -255,29 +272,11 @@ class mechanical_display:
                 print("image size unmatched")
 
 
-# ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
-    def usValue(self, coordinate = [0, 0], gray_scale_color = 0  ):
-        x = coordinate[0]
-        y = coordinate[1]
-        unit_ID  = self.PixelIDList[x][y][0]
-        servo_ID = self.PixelIDList[x][y][1]
-        usCenter = self.usCenter[unit_ID][servo_ID]
-        usMax = self.usMax[unit_ID][servo_ID]
-        usMin = self.usMin[unit_ID][servo_ID]
-        gray_scale_level = 2 ** self.gray_scale_bit_value
-
-        if gray_scale_color < (gray_scale_level / 2):
-            us = int(usMin + (((usCenter - usMin) / (gray_scale_level - 1)) * gray_scale_color * 2))
-        elif gray_scale_color == gray_scale_level:
-            us = usCenter
-        else:
-            us = int(usMax - (((usMax - usCenter) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
-        print("coordinate, glay_scale_color, us", coordinate, gray_scale_color, us)
-
 #displayのUnit配置数定義
 unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 servo_layout = [4, 4]
-gray_scale_bit_value = 4
+gray_scale_bit_value = 8
+gray_scale_level = 2**gray_scale_bit_value
 
 #I2C　初期化
 i2c = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
@@ -294,6 +293,7 @@ display.flatPosition()
 time.sleep_ms(300)
 
 
+"""
 l16 = [16,16,16,16,16,16,16,16]
 l15 = [15,15,15,15,15,15,15,15]
 l14 = [14,14,14,14,14,14,14,14]
@@ -460,7 +460,6 @@ display.setImage(image)
 time.sleep_ms(100)
 image = [l1,l2,l3,l4,l5,l6,l7,l16]
 display.setImage(image)
-
 time.sleep_ms(100)
 image = [l2,l3,l4,l5,l6,l7,l16,l16]
 display.setImage(image)
@@ -489,20 +488,34 @@ time.sleep_ms(100)
 image = [l16,l16,l16,l16,l16,l16,l16,l16]
 display.setImage(image)
 
+"""
 
 
 
 
 
 
+for i in range(gray_scale_level):
+    display.setPixel([7,7],i)
+#    print(i)
+    time.sleep_ms(12)
+#time.sleep_ms(100)
 
+for i in range(gray_scale_level):
+    display.setPixel([7,7],gray_scale_level - 1 - i)
+#    print(i)
+    time.sleep_ms(12)
 
+#time.sleep_ms(100)
 
-
-
-
+for i in range(gray_scale_level):
+    display.setPixel([7,7],i)
+#    print(i)
+    time.sleep_ms(12)
+time.sleep_ms(100)
+display.setPixel([7,7],gray_scale_level)
 
 #display.flatPosition()
-#time.sleep_ms(2000)
+time.sleep_ms(1000)
 display.Release()
 
