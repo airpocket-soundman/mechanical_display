@@ -1,4 +1,4 @@
-class font_5P:
+class font_5P():
     def __init__(self):
         self.monospace_4P   =   {
                                     "0"     :   [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
@@ -108,6 +108,33 @@ class font_5P:
                                     "<"     :   [[0,0,1,0,0],[0,1,0,1,0],[1,0,0,0,1]],
                                     ">"     :   [[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0]],
                                     "?"     :   [[1,0,1,0,1],[1,0,1,0,0],[0,1,0,0,0]],
-                                    " "     :   [[0,0,0,0,0],[0,0,0,0,0]]
+                                    " "     :   [[0,0,0,0,0]]
                                 }
         
+    def genTextImage(self, text, monospace = False):
+        text = list(text)
+        print("text",text)
+        dotImage = []
+
+
+        # textの文字を空白列を追加して連結
+        for char in text:
+            print("char", char)
+            #print(self.dotsFont5pDict[ord(char)])
+            if monospace == False:
+                for i in range(len(self.propotional[char])):
+                    dotImage.append(self.propotional[char][i])
+
+
+            elif monospace == True:
+                if isinstance(dotImage, int):
+                    dotImage = self.monospace_4P[char]
+                else:
+                    for i in range(len(self.monospace_4P[char])):
+                        dotImage.append(self.propotional[char][i])
+
+            dotImage.append(self.propotional[" "][0])
+
+
+        #print(dotImage)
+        return dotImage

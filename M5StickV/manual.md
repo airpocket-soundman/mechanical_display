@@ -1,22 +1,32 @@
 
 
 
-## clas mechanical_display(i2c, unit_layout[2,2], servo_layout[4,4], gray_scale_bit_size[8])
+## class mechanical_display(i2c, unit_layout[2,2], servo_layout[4,4], gray_scale_bit_size[8])
 
-### self.setImage(img)
+### self.setImage(img = None)
 imgを表示する
-imgはx行y列のリスト
+imgはx行y列のリスト。要素の値は0～gray_scale_level - 1
 
-img = -1でrelease
-img = (2 ** gray_scale_bit_size) でflat position
+img = None:全画面release
 
 
-### self.setPixel(value, coordinate = None)
+
+### self.setPixel(coordinate = None, value = None)
 coordinateで指定した座標のpixelをvalue色にする
 
-value:-1 ～ 2 ** gray_scale_bit_size
-value = -1 :release
-value = (2 ** gray_scale_bit_size) : flat position
+value:0 ～ gray_scale_level
+value = None :release
+value = gray_scale_level : flat position
 
-coordinate: [x, y] x座標 = x, y座標 = y のpixelの色を設定
-coordinate = Noneで画面全体
+coordinate: [x, y] x座標 = x, y座標 = y 
+coordinate = None :画面全体
+
+### self.flatPosition()
+
+### self.maxPosition()
+
+### self.minPosition()
+
+### self.release(coordinate = None)
+coordinate = None:画面全体release
+coordinate = [x,y]: 座標[x,y]をrelease
