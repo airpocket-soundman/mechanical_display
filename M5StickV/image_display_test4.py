@@ -67,6 +67,7 @@ class mechanical_display:
         #生成されたPixelIDListを確認
         print("PixelIDList:")
         for i in range(len(self.PixelIDList)):
+            time.sleep_ms(10)
             print(self.PixelIDList[i])
 
 # サーボのキャリブレーションデータ 4*4ユニット対応版
@@ -141,29 +142,30 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        for y in range(self.pixel_layout):
-            list = []
-            for x in range(self.pixel_layout):
+        print("old_image")
+        for x in range(self.pixel_layout[0]):
+            listb = []
+            for y in range(self.pixel_layout[1]):
                 list.append(self.gray_scale_level)
             self.old_image.append(list)
-        
+
         self.setImage(self.old_image)
 
 # imageを表示する（差分表示作成中
     def setImage(self, img):
         #imgのサイズとdisplayのサイズがマッチするか確認
         if len(img) != (self.pixel_layout[0]):
-            print("image width unmatched")
+            print("image width unmatched", len(img))
             return
-        elif len(img[1]) != (self.pixel_layout[1]):
-            print("image height unmatched")
+        elif len(img[0]) != (self.pixel_layout[1]):
+            print("image height unmatched", len(img[0]))
             return
 
         #書き換えるイメージの差分のみ書き換える
         for y in range(self.pixel_layout[1]):
             for x in range(self.pixel_layout[0]):
                 if img[x][y] != self.old_image[x][y]:
-                    print("x,y",x,y)
+#                    print("x,y",x,y)
                     self.setPixel([x,y],img[x][y])
 
 
@@ -171,20 +173,21 @@ class mechanical_display:
 #            for y in range(self.pixel_layout[1]):
 #                for x in range(self.pixel_layout[0]):
 #                    self.setPixel([x,y],img[x][y])
-#            self.old_image = img       
+#            self.old_image = img
 
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
-    
+
     def setPixel(self, coordinate = None, value = None):
 
         #指定座標がレンジ外の場合の処理
-        if coordinate[0] > self.pixel_layout[0]:
-            print("x is out of range", x)
-            return
-        if coordinate[1] > self.pixel_layout[1]:
-            print("y is out of range", y)
-            return
+        if coordinate != None:
+            if int(coordinate[0]) > int(self.pixel_layout[0]):
+                print("x is out of range", x)
+                return
+            if int(coordinate[1]) > int(self.pixel_layout[1]):
+                print("y is out of range", y)
+                return
 
         #座標が未入力の場合、全ピクセル範囲を指定
         if coordinate == None:
@@ -200,15 +203,17 @@ class mechanical_display:
             y1 = coordinate[1]
             y2 = coordinate[1] + 1
 
+        #print("x1,x2,y1,y2",x1,x2,y1,y2)
 
         for y in range(y1, y2, 1):
             for x in range(x1, x2, 1):
                 if value == None:
                     self.pca[self.PixelIDList[x][y][0]].release(self.PixelIDList[x][y][1])
-                else:        
+                else:
                     usValue = self.usValue([x, y], value)
+                    #print("set pca",usValue, value)
                     self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=usValue)
-                    self.old_image[x][y] = value
+#                    self.old_image[x][y] = value
 
 #        x = coordinate[0]
 #        y = coordinate[1]
@@ -220,12 +225,17 @@ class mechanical_display:
     def usValue(self, coordinate = [0, 0], gray_scale_color = 0):
         x = coordinate[0]
         y = coordinate[1]
+#        print("usValue x,y", x,y)
+#        print(self.PixelIDList)
+#        time.sleep_ms(100)
+#        print("PixelIDList[7][0][0]",self.PixelIDList[7][0][0])
         unit_ID  = self.PixelIDList[x][y][0]
         servo_ID = self.PixelIDList[x][y][1]
         usCenter = self.usCenter[unit_ID][servo_ID]
         usMax = self.usMax[unit_ID][servo_ID]
         usMin = self.usMin[unit_ID][servo_ID]
         gray_scale_level = 2 ** self.gray_scale_bit_value
+#        print("unit_ID",unit_ID)
 
         if gray_scale_color < (gray_scale_level / 2):
             us = int(usMin + (((usCenter - usMin) / (gray_scale_level - 1)) * gray_scale_color * 2))
@@ -233,6 +243,7 @@ class mechanical_display:
             us = usCenter
         else:
             us = int(usMax - (((usMax - usCenter) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
+#        print(us)
         return us
 
 
@@ -241,11 +252,14 @@ class mechanical_display:
         print("flat position")
         #self.setImage(self.flatImage)
 
+        self.setPixel(value = gray_scale_level)
+        """
         for y in range(self.pixel_layout[1]):
             for x in range(self.pixel_layout[0]):
-                self.setPixel(self.gray_scale_bit_level)
+                print("flat position",x,y)
+                self.setPixel(value = self.gray_scale_level)
                 #self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.usCenter[self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
-
+        """
 # 全てのパネルを最大位置に移動する
     def maxPosition(self):
         print("max position")
@@ -253,7 +267,7 @@ class mechanical_display:
 
         for y in range(self.pixel_layout[1]):
             for x in range(self.pixel_layout[0]):
-                self.setPixel(self.gray_scale_bti_level - 1)
+                self.setPixel(self.gray_scale_level - 1)
                 #self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.usMax[self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
 
 # 全てのパネルを最小位置に移動する
@@ -288,7 +302,7 @@ class mechanical_display:
 
     def fontOverlay(self, bg_image, font_image ,offset, font_color = None, transparent = True):
         if font_color == None:
-            font_color = self.gray_scale_level -1 
+            font_color = self.gray_scale_level -1
         bg_size = [len(bg_image), len(bg_image[0])]
         font_size = [len(font_image), len(font_image[0])]
 
@@ -315,29 +329,32 @@ class mechanical_display:
 
         image = []
 
-        for y in range(self.pixel_layout[1]):
+        for x in range(self.pixel_layout[0]):
             list = []
-            for x in range(self.pixel_layout[0]):
+            for y in range(self.pixel_layout[1]):
                 list.append(bg_color)
             image.append(list)
 
-        for y in range(text_size[1]): 
-            if y + offset[1] < self.pixel_layout[1] and y + offset[1] >= 0: 
-                for x in range(text_size[0]): 
+        for y in range(text_size[1]):
+            if y + offset[1] < self.pixel_layout[1] and y + offset[1] >= 0:
+                for x in range(text_size[0]):
                     if x + offset[0] < self.pixel_layout[0] and x + offset[0] >= 0:
                         if transparent == False:
                             image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
                         else:
                             if text_image[x][y] == 1:
+                                print("text overlay image size", len(image),len(image[0]),x,y)
+                                print("check",image[x + offset[0]][y + offset[1]])
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-        return image                    
+        print(len(image),len(image[0]))
+        return image
 
 
 
 #=======================================================================================================================
 
 #displayのUnit配置数定義
-unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
+unit_layout  = [2, 1]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 servo_layout = [4, 4]
 pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[1]]
 gray_scale_bit_value = 8
@@ -354,7 +371,7 @@ print( "address is :" + str(addr) )
 display = mechanical_display(i2c, unit_layout, servo_layout, gray_scale_bit_value)
 
 #5Pフォントのインスタンス生成
-Font = font.font_5P
+Font = font.font_5P()
 
 #flatポジションを表示する。
 display.flatPosition()
@@ -365,26 +382,30 @@ time.sleep_ms(300)
 
 # テキスト表示テスト
 
+"""
 # テキストイメージ表示
 text_image = Font.genTextImage(text = "A",monospace = False)
 image = display.textOverlay(text_image,offset = [0,0],text_color = 255, bg_color = 0, transparent = True)
 display.setImage(image)
 time.sleep_ms(2000)
 
+
 # テキストイメージはみだし有り表示
 text_image = Font.genTextImage(text = "AB",monospace = False)
 image = display.textOverlay(text_image,offset = [0,0],text_color = 255, bg_color = 0, transparent = True)
 display.setImage(image)
 time.sleep_ms(2000)
-
+"""
 # テキストイメージスクロール表示
 
-text_image = Font.genTextImage(text = "    hallo world",monospace = False)
+text_image = Font.genTextImage(text = "    hallo",monospace = False)
 for x in range(len(text_image)):
-    image = display.textOverlay(text_image, offset = [-x, 0], text_color = 255, bg_color = 0, transparent = True)
+    image = display.textOverlay(text_image, offset = [-x, 0], text_color = 200, bg_color = 55, transparent = True)
     print("image", x)
+    for i in range(len(image)):
+        print(image[i])
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(300)
 
 
 
@@ -590,7 +611,7 @@ display.setImage(image)
 
 
 
-
+"""
 for i in range(gray_scale_level):
     display.setPixel([7,7],i)
 #    print(i)
@@ -610,8 +631,8 @@ for i in range(gray_scale_level):
     time.sleep_ms(12)
 time.sleep_ms(100)
 display.setPixel([7,7],gray_scale_level)
-
-#display.flatPosition()
+"""
+display.flatPosition()
 time.sleep_ms(1000)
 display.release()
 
