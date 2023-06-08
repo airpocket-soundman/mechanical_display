@@ -30,3 +30,12 @@ coordinate = None :画面全体
 ### self.release(coordinate = None)
 coordinate = None:画面全体release
 coordinate = [x,y]: 座標[x,y]をrelease
+
+### def textOverlay(self, text_image ,offset = [0,0], text_color = None, bg_color = None, transparent = True):
+displayに対し、表示できるサイズにtext_imageをクロップする
+text_image: 表示するテキストのイメージ。font.font5P.genTextImage()で生成
+offset
+text_color:0-255 Noneで255
+bg_color:0-255 Noneで0
+transparent:Falseでフォント背景が0、
+

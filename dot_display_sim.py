@@ -2,10 +2,11 @@ import numpy as np
 import cv2
 
 class VDisplay():
-    def __init__(self, displayWidth, displayHeight):
+    def __init__(self, displayWidth, displayHeight,fps=10):
 
         self.displayWidth  = displayWidth
         self.displayHeight = displayHeight
+        self.delay_ms = int(1/fps*1000)
 
 # 仮想ディスプレイ上のドットのサイズとギャップの定義
         self.dotSize = 30
@@ -35,6 +36,13 @@ class VDisplay():
                 self.color = int(dotImg[i,j])
                 cv2.rectangle(self.img, (self.x, self.y), (self.x + self.dotSize, self.y + self.dotSize), self.color, thickness = -1)
         cv2.imshow("img",self.img)
+        key = cv2.waitKey(self.delay_ms)
+
+    def setPixel(self, coordinate, color):
+        self.x = self.pixelCoordinate[coordinate[0],coordinate[1],0]
+        self.y = self.pixelCoordinate[coordinate[0],coordinate[1],1]
+        cv2.rectangle(self.img, (self.x, self.y), (self.x + self.dotSize, self.y + self.dotSize), color, thickness = -1)
+        cv2.imshow("img", self.img)
         key = cv2.waitKey(self.delay_ms)
 
     # テキストのdotImageを受け取り、スクロールアニメーションに変換して仮想ディスプレイに表示するメソッド

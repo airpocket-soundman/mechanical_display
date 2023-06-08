@@ -1,9 +1,4 @@
-image = []
+import math
 
-if image == []:
-    print("yes")
-    image.append(3)
-else:
-    print("no")
-
-print(image)
+for i in range(11):
+    print(i/10, math.sin(i/10 * math.pi * 2))
