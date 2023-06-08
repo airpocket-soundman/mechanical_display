@@ -5,7 +5,7 @@ import servo
 import font
 
 from Maix import GPIO
-rom fpioa_manager import fm, board_info
+from fpioa_manager import fm, board_info
 import lcd
 import sensor
 
@@ -60,20 +60,20 @@ class mechanical_display:
             for k in range(self.servo_layout[0]):
                 list = []
                 for y in  range(self.unit_layout[1]):
-                    print("x,y",x,y)
+#                    print("x,y",x,y)
                     UnitID = self.unit_ID_list[x][y]
-                    print("UnitID", UnitID)
-                    print(self.UnitPixelIDList)
+#                    print("UnitID", UnitID)
+#                    print(self.UnitPixelIDList)
                     for l in range(self.servo_layout[1]):
                         list.append([UnitID,self.UnitPixelIDList[k][l]])
 
                 self.PixelIDList.append(list)
 
         #生成されたPixelIDListを確認
-        print("PixelIDList:")
-        for i in range(len(self.PixelIDList)):
-            time.sleep_ms(10)
-            print(self.PixelIDList[i])
+#        print("PixelIDList:")
+#        for i in range(len(self.PixelIDList)):
+#            time.sleep_ms(10)
+#            print(self.PixelIDList[i])
 
 # サーボのキャリブレーションデータ 4*4ユニット対応版
 
@@ -149,7 +149,7 @@ class mechanical_display:
         self.old_image = []
         print("old_image")
         for x in range(self.pixel_layout[0]):
-            listb = []
+            list = []
             for y in range(self.pixel_layout[1]):
                 list.append(self.gray_scale_level)
             self.old_image.append(list)
@@ -206,6 +206,7 @@ class mechanical_display:
                 if value == None:
                     self.pca[self.PixelIDList[x][y][0]].release(self.PixelIDList[x][y][1])
                 else:
+                    print(x,y,value)
                     usValue = self.usValue([x, y], value)
                     self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=usValue)
                     self.old_image[x][y] = value
@@ -214,6 +215,9 @@ class mechanical_display:
     def usValue(self, coordinate = [0, 0], gray_scale_color = 0):
         x = coordinate[0]
         y = coordinate[1]
+#        print(x,y)
+#        print(self.PixelIDList[x])
+#        time.sleep_ms(50)
         unit_ID  = self.PixelIDList[x][y][0]
         servo_ID = self.PixelIDList[x][y][1]
         usCenter = self.usCenter[unit_ID][servo_ID]
@@ -309,11 +313,8 @@ sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
 #sensor.set_vflip(1)                 # 1:enable 0:disable
 sensor.set_hmirror(1)                 # 1:enable 0:disable
 
-
-
-
 #displayのUnit配置数定義
-unit_layout  = [2, 1]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
+unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 servo_layout = [4, 4]
 pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[1]]
 gray_scale_bit_value = 8
@@ -357,15 +358,16 @@ time.sleep_ms(2000)
 """
 # テキストイメージスクロール表示
 
+"""
 text_image = Font.genTextImage(text = "    hallo",monospace = False)
 for x in range(len(text_image)):
-    image = display.textOverlay(text_image, offset = [-x, 0], text_color = 200, bg_color = 55, transparent = True)
+    image = display.textOverlay(text_image, offset = [-x, 0], text_color = 255, bg_color = 0, transparent = True)
     print("image", x)
     for i in range(len(image)):
         print(image[i])
     display.setImage(image)
-    time.sleep_ms(300)
-
+    time.sleep_ms(100)
+"""
 
 
 # 4bit wave表示
@@ -593,17 +595,21 @@ display.setPixel([7,7],gray_scale_level)
 """
 
 # カメラ画像表示
+
 while True:
-    if button_a.value() == 1:
+    if button_a.value() == 0:
         break
-    
+
     camera_image = sensor.snapshot()         # Take a picture and return the image.
     camera_image = camera_image.copy((20,0,140,120))
     camera_image = camera_image.resize(8,8)
-    for i in range(len(image)):
-        print(image[i])
-    display.setImage(image)
-    time.sleep_ms(300)
+    for x in range(8):
+        for y in range(8):
+            p = camera_image.get_pixel(x,y)
+            display.setPixel([x,y],p)
+            print(p)
+    print("loop")
+#    time.sleep_ms(10)
 
 
 display.flatPosition()

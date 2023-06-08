@@ -144,7 +144,7 @@ class mechanical_display:
         self.old_image = []
         print("old_image")
         for x in range(self.pixel_layout[0]):
-            listb = []
+            list = []
             for y in range(self.pixel_layout[1]):
                 list.append(self.gray_scale_level)
             self.old_image.append(list)
@@ -213,7 +213,7 @@ class mechanical_display:
                     usValue = self.usValue([x, y], value)
                     #print("set pca",usValue, value)
                     self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=usValue)
-#                    self.old_image[x][y] = value
+                    self.old_image[x][y] = value
 
 #        x = coordinate[0]
 #        y = coordinate[1]
@@ -354,10 +354,10 @@ class mechanical_display:
 #=======================================================================================================================
 
 #displayのUnit配置数定義
-unit_layout  = [2, 1]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
+unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 servo_layout = [4, 4]
 pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[1]]
-gray_scale_bit_value = 8
+gray_scale_bit_value = 4
 gray_scale_level = 2**gray_scale_bit_value
 
 #I2C　初期化
@@ -398,74 +398,134 @@ time.sleep_ms(2000)
 """
 # テキストイメージスクロール表示
 
-text_image = Font.genTextImage(text = "    hallo",monospace = False)
-for x in range(len(text_image)):
-    image = display.textOverlay(text_image, offset = [-x, 0], text_color = 200, bg_color = 55, transparent = True)
-    print("image", x)
-    for i in range(len(image)):
-        print(image[i])
-    display.setImage(image)
-    time.sleep_ms(300)
+def imageScroll():
+    text_image = Font.genTextImage(text = "    hallo",monospace = False)
+    for x in range(len(text_image)):
+        image = display.textOverlay(text_image, offset = [-x, 0], text_color = 200, bg_color = 55, transparent = True)
+        print("image", x)
+        for i in range(len(image)):
+            print(image[i])
+        display.setImage(image)
+        time.sleep_ms(100)
+
 
 
 
 # 4bit wave表示
-"""
-l16 = [16,16,16,16,16,16,16,16]
-l15 = [15,15,15,15,15,15,15,15]
-l14 = [14,14,14,14,14,14,14,14]
-l13 = [13,13,13,13,13,13,13,13]
-l12 = [12,12,12,12,12,12,12,12]
-l11 = [11,11,11,11,11,11,11,11]
-l10 = [10,10,10,10,10,10,10,10]
-l9 = [9,9,9,9,9,9,9,9]
-l8 = [8,8,8,8,8,8,8,8]
-l7 = [7,7,7,7,7,7,7,7]
-l6 = [6,6,6,6,6,6,6,6]
-l5 = [5,5,5,5,5,5,5,5]
-l4 = [4,4,4,4,4,4,4,4]
-l3 = [3,3,3,3,3,3,3,3]
-l2 = [2,2,2,2,2,2,2,2]
-l1 = [1,1,1,1,1,1,1,1]
-l0 = [0,0,0,0,0,0,0,0]
+def wave():
+    l16 = [16,16,16,16,16,16,16,16]
+    l15 = [15,15,15,15,15,15,15,15]
+    l14 = [14,14,14,14,14,14,14,14]
+    l13 = [13,13,13,13,13,13,13,13]
+    l12 = [12,12,12,12,12,12,12,12]
+    l11 = [11,11,11,11,11,11,11,11]
+    l10 = [10,10,10,10,10,10,10,10]
+    l9 = [9,9,9,9,9,9,9,9]
+    l8 = [8,8,8,8,8,8,8,8]
+    l7 = [7,7,7,7,7,7,7,7]
+    l6 = [6,6,6,6,6,6,6,6]
+    l5 = [5,5,5,5,5,5,5,5]
+    l4 = [4,4,4,4,4,4,4,4]
+    l3 = [3,3,3,3,3,3,3,3]
+    l2 = [2,2,2,2,2,2,2,2]
+    l1 = [1,1,1,1,1,1,1,1]
+    l0 = [0,0,0,0,0,0,0,0]
 
-image = [l16,l16,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
+    image = [l16,l16,l16,l16,l16,l16,l16,l16]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l16,l16,l8]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l16,l16,l16,l16,l16,l16,l8]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l16,l8,l9]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l16,l16,l16,l16,l16,l8,l9]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l8,l9,l10]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l16,l16,l16,l16,l8,l9,l10]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l8,l9,l10,l11]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l16,l16,l16,l8,l9,l10,l11]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l16,l16,l8,l9,l10,l11,l12]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l16,l16,l8,l9,l10,l11,l12]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l16,l8,l9,l10,l11,l12,l13]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l16,l8,l9,l10,l11,l12,l13]
+    display.setImage(image)
 
-time.sleep_ms(100)
-image = [l16,l8,l9,l10,l11,l12,l13,l14]
-display.setImage(image)
+    time.sleep_ms(100)
+    image = [l16,l8,l9,l10,l11,l12,l13,l14]
+    display.setImage(image)
 
+    for i in range(10):
+        time.sleep_ms(100)
+        image = [l8,l9,l10,l11,l12,l13,l14,l15]
+        display.setImage(image)
 
+        time.sleep_ms(100)
+        image = [l9,l10,l11,l12,l13,l14,l15,l0]
+        display.setImage(image)
 
+        time.sleep_ms(100)
+        image = [l10,l11,l12,l13,l14,l15,l0,l1]
+        display.setImage(image)
 
+        time.sleep_ms(100)
+        image = [l11,l12,l13,l14,l15,l0,l1,l2]
+        display.setImage(image)
 
-for i in range(1):
+        time.sleep_ms(100)
+        image = [l12,l13,l14,l15,l0,l1,l2,l3]
+        display.setImage(image)
 
+        time.sleep_ms(100)
+        image = [l13,l14,l15,l0,l1,l2,l3,l4]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l14,l15,l0,l1,l2,l3,l4,l5]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l15,l0,l1,l2,l3,l4,l5,l6]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l0,l1,l2,l3,l4,l5,l6,l7]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l1,l2,l3,l4,l5,l6,l7,l8]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l2,l3,l4,l5,l6,l7,l8,l9]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l3,l4,l5,l6,l7,l8,l9,l10]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l4,l5,l6,l7,l8,l9,l10,l11]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l5,l6,l7,l8,l9,l10,l11,l12]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l6,l7,l8,l9,l10,l11,l12,l13]
+        display.setImage(image)
+
+        time.sleep_ms(100)
+        image = [l7,l8,l9,l10,l11,l12,l13,l14]
+        display.setImage(image)
 
     time.sleep_ms(100)
     image = [l8,l9,l10,l11,l12,l13,l14,l15]
@@ -504,108 +564,38 @@ for i in range(1):
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l1,l2,l3,l4,l5,l6,l7,l8]
+    image = [l1,l2,l3,l4,l5,l6,l7,l16]
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l2,l3,l4,l5,l6,l7,l8,l9]
+    image = [l2,l3,l4,l5,l6,l7,l16,l16]
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l3,l4,l5,l6,l7,l8,l9,l10]
+    image = [l3,l4,l5,l6,l7,l16,l16,l16]
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l4,l5,l6,l7,l8,l9,l10,l11]
+    image = [l4,l5,l6,l7,l16,l16,l16,l16]
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l5,l6,l7,l8,l9,l10,l11,l12]
+    image = [l5,l6,l7,l16,l16,l16,l16,l16]
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l6,l7,l8,l9,l10,l11,l12,l13]
+    image = [l6,l7,l16,l16,l16,l16,l16,l16]
     display.setImage(image)
 
     time.sleep_ms(100)
-    image = [l7,l8,l9,l10,l11,l12,l13,l14]
+    image = [l7,l16,l16,l16,l16,l16,l16,l16]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l16,l16,l16,l16,l16,l16,l16,l16]
     display.setImage(image)
 
 
-
-
-
-
-
-
-time.sleep_ms(100)
-image = [l8,l9,l10,l11,l12,l13,l14,l15]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l9,l10,l11,l12,l13,l14,l15,l0]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l10,l11,l12,l13,l14,l15,l0,l1]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l11,l12,l13,l14,l15,l0,l1,l2]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l12,l13,l14,l15,l0,l1,l2,l3]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l13,l14,l15,l0,l1,l2,l3,l4]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l14,l15,l0,l1,l2,l3,l4,l5]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l15,l0,l1,l2,l3,l4,l5,l6]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l0,l1,l2,l3,l4,l5,l6,l7]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l1,l2,l3,l4,l5,l6,l7,l16]
-display.setImage(image)
-time.sleep_ms(100)
-image = [l2,l3,l4,l5,l6,l7,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l3,l4,l5,l6,l7,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l4,l5,l6,l7,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l5,l6,l7,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l6,l7,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l7,l16,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-"""
 
 
 
@@ -632,6 +622,11 @@ for i in range(gray_scale_level):
 time.sleep_ms(100)
 display.setPixel([7,7],gray_scale_level)
 """
+
+#imageScroll()
+
+wave()
+
 display.flatPosition()
 time.sleep_ms(1000)
 display.release()
