@@ -72,7 +72,8 @@ class mechanical_display:
 
 # サーボのキャリブレーションデータ 4*4ユニット対応版
 
-        self.usCenter= [[1550, 1480, 1430, 1450,  1650, 1530, 1460, 1440,  1430, 1410, 1560, 1440,  1440, 1420, 1430, 1550],
+#        self.usCenter= [[1550, 1480, 1430, 1450,  1650, 1530, 1460, 1440,  1430, 1410, 1560, 1440,  1440, 1420, 1430, 1550],
+        self.usCenter= [[1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                         [1440, 1560, 1460, 1580,  1500, 1445, 1580, 1390,  1470, 1430, 1460, 1370,  1520, 1480, 1500, 1600],
                         [1420, 1550, 1570, 1525,  1500, 1640, 1480, 1580,  1550, 1680, 1515, 1420,  1550, 1590, 1515, 1550],
                         [1590, 1680, 1500, 1420,  1590, 1420, 1500, 1370,  1540, 1470, 1470, 1530,  1485, 1500, 1650, 1490],
@@ -252,7 +253,7 @@ class mechanical_display:
         print("flat position")
         #self.setImage(self.flatImage)
 
-        self.setPixel(value = gray_scale_level)
+        self.setPixel(value = self.gray_scale_level)
         """
         for y in range(self.pixel_layout[1]):
             for x in range(self.pixel_layout[0]):
@@ -264,10 +265,10 @@ class mechanical_display:
     def maxPosition(self):
         print("max position")
         #self.setImage(self.maxImage)
-
-        for y in range(self.pixel_layout[1]):
-            for x in range(self.pixel_layout[0]):
-                self.setPixel(self.gray_scale_level - 1)
+        self.setPixel(value = self.gray_scale_level - 1)
+#        for y in range(self.pixel_layout[1]):
+#            for x in range(self.pixel_layout[0]):
+#                self.setPixel(self.gray_scale_level - 1)
                 #self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=self.usMax[self.PixelIDList[x][y][0]][self.PixelIDList[x][y][1]])
 
 # 全てのパネルを最小位置に移動する
@@ -354,7 +355,7 @@ class mechanical_display:
 #=======================================================================================================================
 
 #displayのUnit配置数定義
-unit_layout  = [2, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
+unit_layout  = [1, 1]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 servo_layout = [4, 4]
 pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[1]]
 gray_scale_bit_value = 4
@@ -625,9 +626,11 @@ display.setPixel([7,7],gray_scale_level)
 
 #imageScroll()
 
-wave()
-
+#wave()
+display.maxPosition()
+time.sleep_ms(2000)
 display.flatPosition()
+#display.setPixel([0,0],0)
 time.sleep_ms(1000)
 display.release()
 
