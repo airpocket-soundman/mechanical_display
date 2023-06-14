@@ -19,13 +19,13 @@ class mechanical_display:
         self.gray_scale_level = 2 ** gray_scale_bit_value
         self.pixel_layout = [self.unit_layout[0] * self.servo_layout[0], self.unit_layout[1] * self.servo_layout[1]]
 #UnitのI2C addressのリスト定義
-        self.UnitAddressList = [[64, 65, 66, 67],
-                                [68, 69, 70, 71],
-                                [72, 73, 74, 75],
-                                [76, 77, 78, 79]]
+        self.unit_address_list = [[64, 65, 66, 67],
+                                  [68, 69, 70, 71],
+                                  [72, 73, 74, 75],
+                                  [76, 77, 78, 79]]
 
 #UnitのIDのリスト定義
-        print("set UnitIDList")
+        print("set unit_ID_list")
         self.unit_ID_list = []
         n = 0
         for y in range(self.unit_layout[1]):
@@ -47,37 +47,38 @@ class mechanical_display:
         print("unit_ID_list:",self.unit_ID_list)
 
 #Unit内のPixel位置とサーボIDの対応を定義
-        self.UnitPixelIDList = [[ 0,  4,  8, 12],
-                                [ 1,  5,  9, 13],
-                                [ 2,  6, 10, 14],
-                                [ 3,  7, 11, 15]]
+        self.unit_pixel_ID_list = [[ 0,  4,  8, 12],
+                                   [ 1,  5,  9, 13],
+                                   [ 2,  6, 10, 14],
+                                   [ 3,  7, 11, 15]]
 
-#unit_ID_listとUnitPixelIDListから、displayのPixelとUnitID,各ユニットのPixelIDを対応させるPixelIDListを生成する
-        print("set PixelIDList")
-        self.PixelIDList = []
+#unit_ID_listとunit_pixel_ID_listから、displayのPixelとunit_ID,各ユニットのPixelIDを対応させるpixel_ID_listを生成する
+        print("set pixel_ID_list")
+        self.pixel_ID_list = []
 
         for x in range(self.unit_layout[0]):
             for k in range(self.servo_layout[0]):
                 list = []
                 for y in  range(self.unit_layout[1]):
 #                    print("x,y",x,y)
-                    UnitID = self.unit_ID_list[x][y]
-#                    print("UnitID", UnitID)
-#                    print(self.UnitPixelIDList)
+                    unit_ID = self.unit_ID_list[x][y]
+#                    print("unit_ID", unit_ID)
+#                    print(self.unit_pixel_ID_list)
                     for l in range(self.servo_layout[1]):
-                        list.append([UnitID,self.UnitPixelIDList[k][l]])
+                        list.append([unit_ID,self.unit_pixel_ID_list[k][l]])
 
-                self.PixelIDList.append(list)
+                self.pixel_ID_list.append(list)
 
-        #生成されたPixelIDListを確認
-#        print("PixelIDList:")
-#        for i in range(len(self.PixelIDList)):
+        #生成されたpixel_ID_listを確認
+#        print("pixel_ID_list:")
+#        for i in range(len(self.pixel_ID_list)):
 #            time.sleep_ms(10)
-#            print(self.PixelIDList[i])
+#            print(self.pixel_ID_list[i])
 
 # サーボのキャリブレーションデータ 4*4ユニット対応版
+#       データ配列[ユニットのy座標][ユニットのx座標][サーボID]
 
-        self.usCenter= [[[1550, 1480, 1430, 1450,  1650, 1530, 1460, 1440,  1430, 1410, 1560, 1440,  1440, 1420, 1430, 1550],
+        self.us_center= [[[1550, 1480, 1430, 1450,  1650, 1530, 1460, 1440,  1430, 1410, 1560, 1440,  1440, 1420, 1430, 1550],
                          [1440, 1560, 1460, 1580,  1500, 1445, 1580, 1390,  1470, 1430, 1460, 1370,  1520, 1480, 1500, 1600],
                          [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                          [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500]],
@@ -97,7 +98,7 @@ class mechanical_display:
                          [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500],
                          [1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500,  1500, 1500, 1500, 1500]]]
 
-        self.usMax   = [[[2020, 1880, 1800, 1840,  2120, 1960, 1850, 1830,  1890, 1860, 1980, 1840,  1900, 1840, 1830, 1930],
+        self.us_max   = [[[2020, 1880, 1800, 1840,  2120, 1960, 1850, 1830,  1890, 1860, 1980, 1840,  1900, 1840, 1830, 1930],
                          [1830, 1940, 1840, 1970,  1890, 1870, 1920, 1770,  1870, 1850, 1860, 1770,  1900, 1870, 1910, 1990],
                          [1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900],
                          [1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900]],
@@ -118,7 +119,7 @@ class mechanical_display:
                          [1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900,  1900, 1900, 1900, 1900]]]
 
 
-        self.usMin   = [[[1180, 1080, 1060, 1080,  1290, 1130, 1050, 1030,  1080, 1010, 1220, 1020,  1080, 1000, 1030, 1100],
+        self.us_min   = [[[1180, 1080, 1060, 1080,  1290, 1130, 1050, 1030,  1080, 1010, 1220, 1020,  1080, 1000, 1030, 1100],
                          [1050, 1170, 1060, 1200,  1100, 1030, 1210, 1010,  1100, 1000, 1070,  980,  1170, 1070, 1140, 1170],
                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]],
@@ -138,23 +139,28 @@ class mechanical_display:
                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]]]
 
-        list1 = []
-        list2 = []
-        list3 = []
+        #4x4ユニットのキャリブレーションデータのうち、使用しているユニットのデータのみ抽出。
+        list = []
         for y in range(unit_layout[1]):
             for x in range(unit_layout[0]):
-                list1.append(self.usCenter[y][x])
-                list2.append(self.usMax[y][x])
-                list3.append(self.usMin[y][x])
-        self.usCenter = list1
-        self.usMax = list2
-        self.usMin = list3
+                list.append(self.us_center[y][x])
+        self.us_center = list
+        list = []
+        for y in range(unit_layout[1]):
+            for x in range(unit_layout[0]):
+                list.append(self.us_max[y][x])
+        self.us_max = list
+        list = []
+        for y in range(unit_layout[1]):
+            for x in range(unit_layout[0]):
+                list.append(self.us_min[y][x])
+        self.us_min = list
 
 #サーボドライバ初期化
         self.pca = []
         for i in range(self.unit_layout[1]):
             for j in range(self.unit_layout[0]):
-                self.pca.append(servo.Servos(self.i2c, address = self.UnitAddressList[i][j]))
+                self.pca.append(servo.Servos(self.i2c, address = self.unit_address_list[i][j]))
 
 # 初期配置としてflat状態を表示
         self.old_image = []
@@ -215,11 +221,11 @@ class mechanical_display:
         for y in range(y1, y2, 1):
             for x in range(x1, x2, 1):
                 if value == None:
-                    self.pca[self.PixelIDList[x][y][0]].release(self.PixelIDList[x][y][1])
+                    self.pca[self.pixel_ID_list[x][y][0]].release(self.pixel_ID_list[x][y][1])
                 else:
                     print(x,y,value)
                     usValue = self.usValue([x, y], value)
-                    self.pca[self.PixelIDList[x][y][0]].position(self.PixelIDList[x][y][1], us=usValue)
+                    self.pca[self.pixel_ID_list[x][y][0]].position(self.pixel_ID_list[x][y][1], us=usValue)
                     self.old_image[x][y] = value
 
 # ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
@@ -227,21 +233,21 @@ class mechanical_display:
         x = coordinate[0]
         y = coordinate[1]
 #        print(x,y)
-#        print(self.PixelIDList[x])
+#        print(self.pixel_ID_list[x])
 #        time.sleep_ms(50)
-        unit_ID  = self.PixelIDList[x][y][0]
-        servo_ID = self.PixelIDList[x][y][1]
-        usCenter = self.usCenter[unit_ID][servo_ID]
-        usMax = self.usMax[unit_ID][servo_ID]
-        usMin = self.usMin[unit_ID][servo_ID]
+        unit_ID  = self.pixel_ID_list[x][y][0]
+        servo_ID = self.pixel_ID_list[x][y][1]
+        us_center = self.us_center[unit_ID][servo_ID]
+        us_max = self.us_max[unit_ID][servo_ID]
+        us_min = self.us_min[unit_ID][servo_ID]
         gray_scale_level = 2 ** self.gray_scale_bit_value
 
         if gray_scale_color < (gray_scale_level / 2):
-            us = int(usMin + (((usCenter - usMin) / (gray_scale_level - 1)) * gray_scale_color * 2))
+            us = int(us_min + (((us_center - us_min) / (gray_scale_level - 1)) * gray_scale_color * 2))
         elif gray_scale_color == gray_scale_level:
-            us = usCenter
+            us = us_center
         else:
-            us = int(usMax - (((usMax - usCenter) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
+            us = int(us_max - (((us_max - us_center) / (gray_scale_level - 1)) * (gray_scale_level - 1 - gray_scale_color) * 2))
 
         return us
 
@@ -297,6 +303,31 @@ class mechanical_display:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
 #        print(len(image),len(image[0]))
         return image
+    
+#コマ間を補完するメソッド
+    def interpolation(self, start_image, finish_image, frame_number):
+        if len(start_image) != len(finish_image) or len(start_image[0]) != len(finish_image[0]):
+            print("image1 & image2 size unmatched")
+            return
+        
+        film = []
+        for i in range(frame_number):
+            frame = []
+            for x in range(len(start_image)):
+                list = []
+                for y in range(len(start_image[1])):
+                    list.append[int(start_image[x][y] + ((finish_image[x][y] - start_image[x][y]) / frame_number))]
+                frame.append(list)
+            film.append(frame)
+        return film
+    
+    def invert_color(self, image):
+        for x in range(len(image)):
+            for y in range(len(image[0])):
+                if image[x][y] != self.gray_scale_level:
+                    image[x][y] = self.gray_scale_level - image[x][y] - 1
+        return image
+    
 
 #=======================================================================================================================
 
