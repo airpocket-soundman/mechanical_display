@@ -117,14 +117,14 @@ class mechanical_display:
 
 
         self.us_min   = [[[1180, 1080, 1060, 1080,  1290, 1130, 1050, 1030,  1080, 1010, 1220, 1020,  1080, 1000, 1030, 1100],
-                          [1050, 1170, 1060, 1200,  1100, 1030, 1210, 1010,  1100, 1000, 1070,  980,  1170, 1070, 1140, 1170],
-                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
-                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]],
+                          [1050, 1170, 1120, 1200,  1100, 1030, 1240, 1010,  1140, 1000, 1110,  980,  1220, 1110, 1180, 1170],
+                          [1000, 1070, 1040, 1050,  1190, 1120, 1110, 1000,  1030, 1130, 1000, 1160,  1080, 1250, 1070, 1150],
+                          [1170, 1160, 1320, 1240,  1250, 1230, 1300, 1100,  1070, 1200, 1250, 1280,  1200, 1280, 1200, 1180]],
 
                          [[1050, 1100, 1190, 1080,  1180, 1230, 1100, 1190,  1190, 1260, 1140,  970,  1200, 1100, 1120, 1100],
                           [1200, 1280, 1150, 1040,  1220, 1050, 1170, 1000,  1180, 1070, 1120, 1140,  1150, 1130, 1290, 1130],
-                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
-                          [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100]],
+                          [1120, 1180, 1270, 1180,  1110, 1250, 1320, 1260,  1250, 1180, 1080, 1190,  1210, 1230, 1320, 1110],
+                          [1190, 1330, 1240, 1330,  1230, 1110, 1270, 1280,  1210, 1260, 1370, 1300,  1210, 1260, 1210, 1240]],
 
                          [[1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
                           [1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100,  1100, 1100, 1100, 1100],
@@ -391,18 +391,19 @@ text_image = Font.genTextImage(text = "AB",monospace = False)
 image = display.textOverlay(text_image,offset = [0,0],text_color = 255, bg_color = 0, transparent = True)
 display.setImage(image)
 time.sleep_ms(2000)
-
+"""
 
 # テキストイメージスクロール表示
-text_image = Font.genTextImage(text = "    hallo",monospace = False)
+time.sleep_ms(5000)
+text_image = Font.genTextImage(text = "        hallo world",monospace = False)
 for x in range(len(text_image)):
-    image = display.textOverlay(text_image, offset = [-x, 0], text_color = 255, bg_color = 0, transparent = True)
-    print("image", x)
-    for i in range(len(image)):
-        print(image[i])
+    image = display.textOverlay(text_image, offset = [-x, 2], text_color = 200, bg_color = 50, transparent = True)
+#    print("image", x)
+#    for i in range(len(image)):
+#        print(image[i])
     display.setImage(image)
-    time.sleep_ms(100)
-"""
+    time.sleep_ms(200)
+
 
 
 # 4bit wave表示
@@ -628,17 +629,18 @@ while True:
             print(p)
     time.sleep_ms(10)
 """
-#for y in range(pixel_layout[1]):
-#    for x in range(pixel_layout[0]):
-#        display.setPixel([x, y],0)
-#        time.sleep_ms(100)
-#        display.setPixel([x, y])
-
+"""
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],0)
+        time.sleep_ms(100)
+        display.setPixel([x, y])
+"""
 #display.setPixel([15,3],0)
 
-display.minPosition()
+#display.minPosition()
 #time.sleep_ms(1000)
-#display.flatPosition()
+display.flatPosition()
 time.sleep_ms(1000)
 display.release()
 
