@@ -331,7 +331,7 @@ button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
 fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
 button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
 
-"""
+
 #LCD設定
 lcd.init(freq=15000000)
 lcd.direction(lcd.YX_LRDU)
@@ -348,7 +348,7 @@ sensor.set_contrast(+2)             # Contrast +2 to -2
 sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
 #sensor.set_vflip(1)                 # 1:enable 0:disable
 sensor.set_hmirror(1)                 # 1:enable 0:disable
-"""
+
 #displayのUnit配置数定義
 unit_layout  = [4, 2]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
 servo_layout = [4, 4]
@@ -394,7 +394,7 @@ time.sleep_ms(2000)
 """
 
 # テキストイメージスクロール表示
-time.sleep_ms(5000)
+#time.sleep_ms(5000)
 text_image = Font.genTextImage(text = "        hallo world",monospace = False)
 for x in range(len(text_image)):
     image = display.textOverlay(text_image, offset = [-x, 2], text_color = 200, bg_color = 50, transparent = True)
@@ -402,12 +402,12 @@ for x in range(len(text_image)):
 #    for i in range(len(image)):
 #        print(image[i])
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
 
 
 # 4bit wave表示
-"""
+
 l16 = [16,16,16,16,16,16,16,16]
 l15 = [15,15,15,15,15,15,15,15]
 l14 = [14,14,14,14,14,14,14,14]
@@ -595,6 +595,9 @@ display.setImage(image)
 time.sleep_ms(100)
 image = [l16,l16,l16,l16,l16,l16,l16,l16]
 display.setImage(image)
+
+
+"""
 for i in range(gray_scale_level):
     display.setPixel([7,7],i)
 #    print(i)
@@ -615,27 +618,28 @@ for i in range(gray_scale_level):
 time.sleep_ms(100)
 display.setPixel([7,7],gray_scale_level)
 # カメラ画像表示
+
 while True:
     if button_a.value() == 0:
         break
 
     camera_image = sensor.snapshot()         # Take a picture and return the image.
     camera_image = camera_image.copy((20,0,140,120))
-    camera_image = camera_image.resize(8,8)
-    for x in range(8):
-        for y in range(8):
+    camera_image = camera_image.resize(pixel_layout[0], pixel_layout[1])
+    for x in range(pixel_layout[0]):
+        for y in range(pixel_layout[1]):
             p = camera_image.get_pixel(x,y)
             display.setPixel([x,y],p)
-            print(p)
+            #print(p)
     time.sleep_ms(10)
-"""
+
 """
 for y in range(pixel_layout[1]):
     for x in range(pixel_layout[0]):
-        display.setPixel([x, y],0)
+        display.setPixel([x, y],gray_scale_level -1)
         time.sleep_ms(100)
         display.setPixel([x, y])
-"""
+
 #display.setPixel([15,3],0)
 
 #display.minPosition()
