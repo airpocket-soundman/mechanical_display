@@ -405,7 +405,7 @@ for x in range(len(text_image)):
     time.sleep_ms(100)
 
 
-
+"""
 # 4bit wave表示
 
 l16 = [16,16,16,16,16,16,16,16]
@@ -595,7 +595,7 @@ display.setImage(image)
 time.sleep_ms(100)
 image = [l16,l16,l16,l16,l16,l16,l16,l16]
 display.setImage(image)
-
+"""
 
 """
 for i in range(gray_scale_level):
@@ -617,8 +617,11 @@ for i in range(gray_scale_level):
     time.sleep_ms(12)
 time.sleep_ms(100)
 display.setPixel([7,7],gray_scale_level)
-# カメラ画像表示
+"""
 
+
+# カメラ画像表示
+"""
 while True:
     if button_a.value() == 0:
         break
@@ -631,8 +634,9 @@ while True:
             p = camera_image.get_pixel(x,y)
             display.setPixel([x,y],p)
             #print(p)
-    time.sleep_ms(10)
+    time.sleep_ms(100)
 
+"""
 """
 for y in range(pixel_layout[1]):
     for x in range(pixel_layout[0]):
@@ -641,7 +645,7 @@ for y in range(pixel_layout[1]):
         display.setPixel([x, y])
 
 #display.setPixel([15,3],0)
-
+"""
 #display.minPosition()
 #time.sleep_ms(1000)
 display.flatPosition()
