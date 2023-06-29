@@ -410,7 +410,7 @@ for x in range(len(text_image)):
     time.sleep_ms(200)
 """
 
-"""
+""""""
 # 4bit wave表示
 
 l16 = [16,16,16,16,16,16,16,16]
@@ -651,8 +651,8 @@ for y in range(pixel_layout[1]):
 """
 #display.setPixel([15,3],0)
 
-display.minPosition()
-time.sleep_ms(1000)
+#display.minPosition()
+#time.sleep_ms(1000)
 display.flatPosition()
 time.sleep_ms(1000)
 display.release()
