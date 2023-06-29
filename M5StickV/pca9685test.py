@@ -15,24 +15,38 @@ addr = i2c.scan()
 print( "address is :" + str(addr) )
 
 pca = []
-pca.append(servo.Servos(i2c,address=0x40))
-pca.append(servo.Servos(i2c,address=0x41))
+print("72")
+pca.append(servo.Servos(i2c,address=72))
+print("73")
+pca.append(servo.Servos(i2c,address=73))
+print("74")
+pca.append(servo.Servos(i2c,address=74))
+print("75")
+pca.append(servo.Servos(i2c,address=75))
+print("76")
+#pca.append(servo.Servos(i2c,address=76))
+#pca.append(servo.Servos(i2c,address=77))
+pca.append(servo.Servos(i2c,address=78))
+pca.append(servo.Servos(i2c,address=79))
+#pca = servo.Servos(i2c, address = 72)
 
-for i in range(16):
-    pca[0].position(i, us=usCenter[i])
-time.sleep_ms(1000)
-for i in range(16):
-    pca[0].position(i, us=usCenter[i])
-time.sleep_ms(1000)
+print("range")
 
-for i in range(16):
-    pca[0].position(i, us=usMax[i])
-time.sleep_ms(1000)
+for j in range(6):
+    for i in range(16):
+        print(i)
+        pca[j].position(i, us=usMax[i])
+        time.sleep_ms(100)
+        pca[j].release(i)
 
-for i in range(16):
-    pca[0].position(i, us=usMin[i])
-time.sleep_ms(1000)
+for j in range(6):
+    for i in range(16):
+        pca[j].position(i, us=usCenter[i])
+        time.sleep_ms(100)
+        pca[j].release(i)
 
+
+"""
 for i in range(16):
     pca[0].position(i, us=usCenter[i])
 time.sleep_ms(1000)
@@ -64,8 +78,8 @@ time.sleep(1)
 
 for i in range(16):
     pca[0].release(i)
-
-
+"""
+"""
 while True:
 #    servo
     for i in range(16):
@@ -142,3 +156,4 @@ while True:
         pca[0].position(i+12,us=usMax[i+12])
     time.sleep_ms(200)
 
+"""
