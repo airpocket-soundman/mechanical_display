@@ -9,11 +9,14 @@ usCenter=[1500, 1480, 1630, 1620, 1670, 1580, 1500, 1650, 1690, 1470, 1580, 1600
 usMax   =[1850, 1850, 2000, 1950, 2000, 1950, 1870, 1990, 2010, 1830, 1930, 1920, 1900, 1900, 1900, 1900]
 usMin   =[1140, 1120, 1250, 1250, 1320, 1250, 1180, 1330, 1310, 1130, 1270, 1220, 1210, 1250, 1090, 1210]
 
-i2c = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
-
-addr = i2c.scan()
-print( "address is :" + str(addr) )
-
+i2c1 = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
+i2c2 = I2C(I2C.I2C1, freq=100000, scl=32, sda=33)
+print("scan")
+addr1 = i2c1.scan()
+addr2 = i2c2.scan()
+print("address1 is :" + str(addr1))
+print("address2 is :" + str(addr2))
+"""
 pca = []
 print("72")
 pca.append(servo.Servos(i2c,address=72))
@@ -45,7 +48,7 @@ for j in range(6):
         time.sleep_ms(100)
         pca[j].release(i)
 
-
+"""
 """
 for i in range(16):
     pca[0].position(i, us=usCenter[i])
