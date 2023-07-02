@@ -407,18 +407,18 @@ display.setImage(image)
 time.sleep_ms(2000)
 """
 
-"""
+
 # テキストイメージスクロール表示
 #time.sleep_ms(5000)
 text_image = Font.genTextImage(text = "        hello world",monospace = False)
 for x in range(len(text_image)):
-    image = display.textOverlay(text_image, offset = [-x, 6], text_color = 200, bg_color = 50, transparent = True)
+    image = display.textOverlay(text_image, offset = [-x, 2], text_color = 50, bg_color = 200, transparent = True)
 #    print("image", x)
 #    for i in range(len(image)):
 #        print(image[i])
     display.setImage(image)
     time.sleep_ms(200)
-"""
+
 
 """
 # 4bit wave表示
@@ -661,8 +661,8 @@ for y in range(pixel_layout[1]):
 """
 #display.setPixel([15,3],0)
 
-display.minPosition()
-time.sleep_ms(1000)
-#display.flatPosition()
+#display.minPosition()
 #time.sleep_ms(1000)
+display.flatPosition()
+time.sleep_ms(1000)
 display.release()
