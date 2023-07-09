@@ -1,17 +1,31 @@
-from machine import I2C
-import sensor, image, time, lcd
-import machine
+#! /usr/bin/env micropython
 
-i2c = I2C(I2C.I2C0, freq=100000, scl=32, sda=33)
+# Micropython driver for the DS3231 RTC Module
 
-#I2C 接続されているユニットのアドレス確認
-addr = i2c.scan()
-print( "address is :" + str(addr) )
+# Inspiration from work done by Mike Causer (mcauser) for the DS1307
+# https://github.com/mcauser/micropython-tinyrtc-i2c/blob/master/ds1307.py
 
-lcd.init(freq=15000000)
-
-lcd.direction(lcd.YX_LRDU)
-lcd.mirror(1)
+# The MIT License (MIT)
+#
+# Copyright (c) 2020 Willem Peterse
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 
 from micropython import const
 
@@ -273,25 +287,3 @@ class DS3231:
     def _is_busy(self):
         """Returns True when device is busy doing TCXO management"""
         return bool(self.i2c.readfrom_mem(self.addr, STATUS_REG, 1)[0] & (1 << 2))
-
-
-
-ds = DS3231(i2c)
-year    = 2023 # Can be yyyy or yy format
-month   = 7
-mday    = 4
-hour    = 15 # 24 hour format only
-minute  = 28
-second  = 30 # Optional
-weekday = 2 # Optional
-
-#datetime = (year, month, mday, hour, minute, second, weekday)
-#ds.datetime(datetime)
-#print(ds.datetime())
-year    = ds.datetime()[0]
-month   = ds.datetime()[1]
-day     = ds.datetime()[2]
-hour    = ds.datetime()[4]
-minute  = ds.datetime()[5]
-second  = ds.datetime()[6]
-print(year, month, day, hour, minute, second)

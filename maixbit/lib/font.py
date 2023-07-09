@@ -1,6 +1,6 @@
 class font_5P():
     def __init__(self):
-        self.number3x5P      =   {
+        self.number3x5p      =   {
                                     "0"     :   [[1,1,1,1,1],[1,0,0,0,1],[1,1,1,1,1]],
                                     "1"     :   [[1,0,0,0,0],[1,1,1,1,1],[0,0,0,0,0]],
                                     "2"     :   [[1,0,1,1,1],[1,0,1,0,1],[1,1,1,0,1]],
@@ -12,7 +12,7 @@ class font_5P():
                                     "8"     :   [[1,1,1,1,1],[1,0,1,0,1],[1,1,1,1,1]],
                                     "9"     :   [[1,1,1,0,0],[1,0,1,0,0],[1,1,1,1,1]]
                                 }
-        self.monospace_4P   =   {
+        self.number4x5p   =   {
                                     "0"     :   [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
                                     "1"     :   [[0,0,0,0,0],[0,1,0,0,1],[1,1,1,1,1],[0,0,0,0,1]],
                                     "2"     :   [[0,1,0,0,1],[1,0,0,1,1],[1,0,1,0,1],[0,1,0,0,1]],
@@ -24,7 +24,7 @@ class font_5P():
                                     "8"     :   [[0,1,0,1,0],[1,0,1,0,1],[1,0,1,0,1],[0,1,0,1,0]],
                                     "9"     :   [[0,1,0,0,0],[1,0,1,0,1],[1,0,1,1,0],[0,1,1,0,0]]
                                 }
-        
+
         self.propotional    =  {
                                     "sp1"   :   [[0,0,0,0,0]],
                                     "a"     :   [[0,0,1,1,0],[0,1,0,0,1],[0,1,0,0,1],[0,1,1,1,0],[0,0,0,0,1]],
@@ -122,8 +122,8 @@ class font_5P():
                                     "?"     :   [[1,0,1,0,1],[1,0,1,0,0],[0,1,0,0,0]],
                                     " "     :   [[0,0,0,0,0]]
                                 }
-        
-    def genTextImage(self, text, monospace = False):
+
+    def genTextImage(self, text, font = "propotional"):
         text = list(text)
         print("text",text)
         dotImage = []
@@ -133,17 +133,18 @@ class font_5P():
         for char in text:
             print("char", char)
             #print(self.dotsFont5pDict[ord(char)])
-            if monospace == False:
+            if font == "propotional":
                 for i in range(len(self.propotional[char])):
                     dotImage.append(self.propotional[char][i])
 
+            elif font == "number3x5p":
+                for i in range(len(self.number3x5p[char])):
+                    dotImage.append(self.number3x5p[char][i])
 
-            elif monospace == True:
-                if isinstance(dotImage, int):
-                    dotImage = self.monospace_4P[char]
-                else:
-                    for i in range(len(self.monospace_4P[char])):
-                        dotImage.append(self.propotional[char][i])
+            elif font == "number4x5p":
+                for i in range(len(self.number4x5p[char])):
+                    dotImage.append(self.number4x5p[char][i])
+
 
             dotImage.append(self.propotional[" "][0])
 

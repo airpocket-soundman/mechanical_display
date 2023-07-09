@@ -2,7 +2,7 @@ from machine import I2C
 import sensor, image, time, lcd
 import machine
 
-i2c = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
+i2c = I2C(I2C.I2C0, freq=100000, scl=32, sda=33)
 
 #I2C 接続されているユニットのアドレス確認
 addr = i2c.scan()

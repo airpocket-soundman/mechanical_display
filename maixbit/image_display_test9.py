@@ -3,6 +3,7 @@ import time
 import pca9685
 import servo
 import font
+import ds3231
 
 from Maix import GPIO
 #from fpioa_manager import fm, board_info
@@ -193,6 +194,8 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
+                else:
+                    time.sleep_us(500)
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
 
@@ -282,18 +285,23 @@ class mechanical_display:
         else:
             self.setPixel(coordinate = coordinates)
 
-    def textOverlay(self, text_image ,offset = [0,0], text_color = None, bg_color = 0, transparent = True):
+# color で受け取った色のグレースケールimageを作る
+    def bg_image_generate(self, color = 0):
+        bg_image =[]
+        for x in range(self.pixel_layout[0]):
+            list = []
+            for y in range(self.pixel_layout[1]):
+                list.append(color)
+            bg_image.append(list)
+        return bg_image
+
+# bg_imageにtext_imageを合成する
+    def textOverlay(self, bg_image = 5, text_image =2,offset = [0,0], text_color = None, transparent = True):
         if text_color == None:
             text_color = self.gray_scale_color -1
         text_size = [len(text_image), len(text_image[0])]
 
-        image = []
-
-        for x in range(self.pixel_layout[0]):
-            list = []
-            for y in range(self.pixel_layout[1]):
-                list.append(bg_color)
-            image.append(list)
+        image = bg_image
 
         for y in range(text_size[1]):
             if y + offset[1] < self.pixel_layout[1] and y + offset[1] >= 0:
@@ -304,6 +312,7 @@ class mechanical_display:
                         else:
                             if text_image[x][y] == 1:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
+        #print(image)
         return image
 
 #コマ間を補完するメソッド
@@ -388,21 +397,67 @@ display.flatPosition()
 time.sleep_ms(300)
 
 
+
+#=====================================================================================================
+#RTCのインスタンスを生成
+ds = ds3231.DS3231(i2c1)
+
+"""
+#RTCの時間設定
+year    = 2023 # Can be yyyy or yy format
+month   = 7
+mday    = 4
+hour    = 15 # 24 hour format only
+minute  = 28
+second  = 30 # Optional
+weekday = 2 # Optional
+
+datetime = (year, month, mday, hour, minute, second, weekday)
+ds.datetime(datetime)
+print(ds.datetime())
+"""
+
+#現在時刻をRTCから読み取って表示
+year    = ds.datetime()[0]
+month   = ds.datetime()[1]
+day     = ds.datetime()[2]
+hour    = ds.datetime()[4]
+minute  = ds.datetime()[5]
+second  = ds.datetime()[6]
+print(year, month, day, hour, minute, second)
+
+
+def clock_display():
+
+    while True:
+        bg_image = display.bg_image_generate(50)
+
+  #      print(bg_image)
+        hour    = ds.datetime()[4]
+        minute  = ds.datetime()[5]
+        second  = ds.datetime()[6]
+        hour_image      = Font.genTextImage(text = '{:02}'.format(hour),font = "number3x5p")
+        colon_image     = Font.genTextImage(text = "  ", font = "propotional")
+        minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
+        sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
+
+        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
+
+        display.setImage(clock_image)
+        #time.sleep_ms(10)
+
 #=====================================================================================================
 
 # テキスト表示テスト
 
 """
 # テキストイメージ表示
-text_image = Font.genTextImage(text = "A",monospace = False)
-image = display.textOverlay(text_image,offset = [0,0],text_color = 255, bg_color = 0, transparent = True)
-display.setImage(image)
-time.sleep_ms(2000)
-
-
-# テキストイメージはみだし有り表示
-text_image = Font.genTextImage(text = "AB",monospace = False)
-image = display.textOverlay(text_image,offset = [0,0],text_color = 255, bg_color = 0, transparent = True)
+text_image = Font.genTextImage(text = "A",font = "propotional")
+bg_image = display.bg_image_generate(200)
+image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
 display.setImage(image)
 time.sleep_ms(2000)
 """
@@ -410,14 +465,19 @@ time.sleep_ms(2000)
 """
 # テキストイメージスクロール表示
 #time.sleep_ms(5000)
-text_image = Font.genTextImage(text = "        hello world",monospace = False)
+text_image = Font.genTextImage(text = "        hello world",font = "propotional")
+#text_image = Font.genTextImage(text = "ABC",font = "propotional")
+print(text_image)
 for x in range(len(text_image)):
-    image = display.textOverlay(text_image, offset = [-x, 2], text_color = 50, bg_color = 200, transparent = True)
-#    print("image", x)
+
+    bg_image = display.bg_image_generate(50)
+    print(x,bg_image)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = 200, transparent = True)
+#    print(image)
 #    for i in range(len(image)):
 #        print(image[i])
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(10)
 """
 
 """
@@ -661,8 +721,8 @@ for y in range(pixel_layout[1]):
 """
 #display.setPixel([15,3],0)
 #"""
-#display.maxPosition()
-#time.sleep_ms(1000)
+display.maxPosition()
+time.sleep_ms(1000)
 #display.flatPosition()
 #time.sleep_ms(100)
 #"""
@@ -671,4 +731,6 @@ for y in range(pixel_layout[1]):
 
 display.flatPosition()
 time.sleep_ms(1000)
+#clock_display()
+
 display.release()
