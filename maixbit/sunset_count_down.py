@@ -194,6 +194,8 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
+                else:
+                    time.sleep_us(500)
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
 
@@ -294,20 +296,13 @@ class mechanical_display:
         return bg_image
 
 # bg_imageにtext_imageを合成する
-    def textOverlay(self,　bg_image, text_image ,offset = [0,0], text_color = None, transparent = True):
+    def textOverlay(self, bg_image = 5, text_image =2,offset = [0,0], text_color = None, transparent = True):
         if text_color == None:
             text_color = self.gray_scale_color -1
         text_size = [len(text_image), len(text_image[0])]
 
         image = bg_image
-        
-        """        
-        for x in range(self.pixel_layout[0]):
-            list = []
-            for y in range(self.pixel_layout[1]):
-                list.append(bg_color)
-            image.append(list)
-        """
+
         for y in range(text_size[1]):
             if y + offset[1] < self.pixel_layout[1] and y + offset[1] >= 0:
                 for x in range(text_size[0]):
@@ -315,10 +310,9 @@ class mechanical_display:
                         if transparent == False:
                             image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
                         else:
-                            print(x,y,text_image[x][y])
                             if text_image[x][y] == 1:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-        print(image)
+        #print(image)
         return image
 
 #コマ間を補完するメソッド
@@ -348,31 +342,6 @@ class mechanical_display:
 
 #=======================================================================================================================
 
-#ボタン設定
-#fm.register(board_info.BUTTON_A, fm.fpioa.GPIO1)
-#button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
-#fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
-#button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
-
-"""
-#LCD設定
-lcd.init(freq=15000000)
-lcd.direction(lcd.YX_LRDU)
-
-#カメラ設定
-sensor.reset()                      # Reset and initialize the sensor. It will
-                                    # run automatically, call sensor.run(0) to stop
-sensor.set_pixformat(sensor.GRAYSCALE) # Set pixel format to RGB565 (or GRAYSCALE)
-sensor.set_framesize(sensor.QQVGA)   # Set frame size to QVGA (320x240) QQVGA (160x120)
-sensor.skip_frames(time = 2000)     # Wait for settings take effect.
-sensor.set_contrast(+2)             # Contrast +2 to -2
-#sensor.set_brightness(-2)           # Brightness +2 to -2
-#sensor.set_saturation(-2)           # Saturation +2 to -2
-sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
-#sensor.set_vflip(1)                 # 1:enable 0:disable
-sensor.set_hmirror(1)                 # 1:enable 0:disable
-
-"""
 
 #displayのUnit配置数定義
 unit_layout  = [4, 4]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
@@ -433,44 +402,146 @@ second  = ds.datetime()[6]
 print(year, month, day, hour, minute, second)
 
 
-def sec_display():
+def clock_display():
+
     while True:
+        bg_image = display.bg_image_generate(50)
+
+  #      print(bg_image)
+        hour    = ds.datetime()[4]
+        minute  = ds.datetime()[5]
         second  = ds.datetime()[6]
-        image = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
-        print('{:02}'.format(second))
-        clock_image
-        clock_image = display.textOverlay(image, offset = [0,10], text_color = 255, bg_color = 0, transparent = True)
+        hour_image      = Font.genTextImage(text = '{:02}'.format(hour),font = "number3x5p")
+        colon_image     = Font.genTextImage(text = "  ", font = "propotional")
+        minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
+        sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
+
+        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
 
         display.setImage(clock_image)
-        time.sleep_ms(10)
+        #time.sleep_ms(10)
+
+def sunset_countdown():
+    while True:
+#        print(bg_image)
+
+        bg_image = display.bg_image_generate(50)
+        hour    = abs(hourS - ds.datetime()[4])
+        minute  = abs(minS - ds.datetime()[5])
+        second  = abs(secS - ds.datetime()[6])
+        hour_image      = Font.genTextImage(text = '{:02}'.format(hour),font = "number3x5p")
+        colon_image     = Font.genTextImage(text = "  ", font = "propotional")
+        minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
+        sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
+
+        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
+
+        display.setImage(clock_image)
+        #time.sleep_ms(10)
+#=====================================================================================================
+
+#sunset time 計算
+
+from math import cos,sin,acos,degrees,radians,pi
+import math
+
+Longitude = 139.7414               # 経度（東経を入力）
+Latitude = 35.6581                 # 緯度（北緯を入力）
+days = 0
+daycount = [31,28,31,30,31,30,31,31,30,31,30,31]
+#month  = 7
+#day = 11
+for i in range(month - 1):
+    days += daycount[i]
+days += day - 1
+print(month,"月",day,"日")
+print("days:",days)
+
+
+def dCalc(n):
+    w = (n + 0.5) * 2 * pi / 365
+    d = + 0.33281 - 22.984 * cos(w) - 0.34990 * cos(2 * w) - 0.13980 * cos(3 * w) + 3.7872 * sin(w) + 0.03250 * sin(2 * w) + 0.07187 * sin(3 * w)
+    return radians(d)
+
+
+def eCalc(n):
+    w = (n + 0.5) * 2 * pi / 365
+    e = + 0.0072 * cos(w) - 0.0528 * cos(2 * w) - 0.0012 * cos(3 * w) - 0.1229 * sin(w) - 0.1565 * sin(2 * w) - 0.0041 * sin(3 * w)
+    return e
+
+def SunRiseTime(x, y, n):    # 日の出時刻を求める関数
+    y = radians(y)    # 緯度をラジアンに変換
+    d = dCalc(n)           # 太陽赤緯を求める
+    e = eCalc(n)           # 均時差を求める
+    # 太陽の時角幅を求める（視半径、大気差などを補正 (-0.899度)　）
+    t = degrees(acos( (sin(radians(-0.899)) - sin(d) * sin(y)) / (cos(d) * cos(y)) ) )
+    return ( -t + 180.0 - x + 135.0) / 15.0 - e  #日の出時刻を返す
+
+def SunSetTime(x, y, n):     # 日の入り時刻を求める関数
+    y = radians(y)      # 緯度をラジアンに変換
+    d = dCalc(n)             # 太陽赤緯を求める
+    e = eCalc(n)             # 均時差を求める
+    # 太陽の時角幅を求める（視半径、大気差などを補正 (-0.899度)　）
+    t = degrees(acos( (sin(radians(-0.899)) - sin(d) * sin(y)) / (cos(d) * cos(y)) ) );
+    return ( t + 180.0 - x + 135.0) / 15.0 - e   #日の入り時刻を返す
+
+sunrize_time = SunRiseTime(Longitude, Latitude, days)
+sunset_time  = SunSetTime(Longitude, Latitude, days)
+hourR = int(sunrize_time)
+minR  = int((sunrize_time - hourR)*60)
+secR  = int((((sunrize_time - hourR)*60) - minR) * 60)
+hourS = int(sunset_time)
+minS  = int((sunset_time - hourS)*60)
+secS  = int((((sunset_time - hourS)*60) - minS) * 60)
+
+print("sun rise",hourR,":",minR,":",secR)
+print("sun set ",hourS,":",minS,":",secS)
+
+
+
+
+
 
 #=====================================================================================================
 
+
+
+
+
 # テキスト表示テスト
 
-#"""
+"""
 # テキストイメージ表示
 text_image = Font.genTextImage(text = "A",font = "propotional")
 bg_image = display.bg_image_generate(200)
 image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
 display.setImage(image)
 time.sleep_ms(2000)
-#"""
+"""
 
-#"""
+"""
 # テキストイメージスクロール表示
 #time.sleep_ms(5000)
 text_image = Font.genTextImage(text = "        hello world",font = "propotional")
-bg_image = display.bg_image_generate(50)
+#text_image = Font.genTextImage(text = "ABC",font = "propotional")
 print(text_image)
 for x in range(len(text_image)):
+
+    bg_image = display.bg_image_generate(50)
+    print(x,bg_image)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = 200, transparent = True)
-    print("image", x)
+#    print(image)
 #    for i in range(len(image)):
 #        print(image[i])
     display.setImage(image)
-    time.sleep_ms(200)
-#"""
+    time.sleep_ms(10)
+"""
 
 """
 # 4bit wave表示
@@ -723,6 +794,7 @@ time.sleep_ms(1000)
 
 display.flatPosition()
 time.sleep_ms(1000)
-#sec_display()
+#clock_display()
+sunset_countdown()
 
 display.release()

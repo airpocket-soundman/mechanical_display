@@ -3,7 +3,7 @@ import time
 import pca9685
 import servo
 import font
-import ds3231
+#import ds3231
 
 from Maix import GPIO
 #from fpioa_manager import fm, board_info
@@ -322,14 +322,15 @@ class mechanical_display:
             return
 
         film = []
-        for i in range(frame_number):
+        for i in range(frame_number + 1):
             frame = []
             for x in range(len(start_image)):
                 list = []
                 for y in range(len(start_image[1])):
-                    list.append[int(start_image[x][y] + ((finish_image[x][y] - start_image[x][y]) / frame_number))]
+                    list.append(int(start_image[x][y] + ((finish_image[x][y] - start_image[x][y]) / frame_number) * i))
                 frame.append(list)
             film.append(frame)
+
         return film
 
     def invert_color(self, image):
@@ -342,31 +343,6 @@ class mechanical_display:
 
 #=======================================================================================================================
 
-#ボタン設定
-#fm.register(board_info.BUTTON_A, fm.fpioa.GPIO1)
-#button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
-#fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
-#button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
-
-"""
-#LCD設定
-lcd.init(freq=15000000)
-lcd.direction(lcd.YX_LRDU)
-
-#カメラ設定
-sensor.reset()                      # Reset and initialize the sensor. It will
-                                    # run automatically, call sensor.run(0) to stop
-sensor.set_pixformat(sensor.GRAYSCALE) # Set pixel format to RGB565 (or GRAYSCALE)
-sensor.set_framesize(sensor.QQVGA)   # Set frame size to QVGA (320x240) QQVGA (160x120)
-sensor.skip_frames(time = 2000)     # Wait for settings take effect.
-sensor.set_contrast(+2)             # Contrast +2 to -2
-#sensor.set_brightness(-2)           # Brightness +2 to -2
-#sensor.set_saturation(-2)           # Saturation +2 to -2
-sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
-#sensor.set_vflip(1)                 # 1:enable 0:disable
-sensor.set_hmirror(1)                 # 1:enable 0:disable
-
-"""
 
 #displayのUnit配置数定義
 unit_layout  = [4, 4]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
@@ -396,341 +372,26 @@ Font = font.font_5P()
 display.flatPosition()
 time.sleep_ms(300)
 
-
-
-#=====================================================================================================
-#RTCのインスタンスを生成
-ds = ds3231.DS3231(i2c1)
-
-"""
-#RTCの時間設定
-year    = 2023 # Can be yyyy or yy format
-month   = 7
-mday    = 4
-hour    = 15 # 24 hour format only
-minute  = 28
-second  = 30 # Optional
-weekday = 2 # Optional
-
-datetime = (year, month, mday, hour, minute, second, weekday)
-ds.datetime(datetime)
-print(ds.datetime())
-"""
-
-#現在時刻をRTCから読み取って表示
-year    = ds.datetime()[0]
-month   = ds.datetime()[1]
-day     = ds.datetime()[2]
-hour    = ds.datetime()[4]
-minute  = ds.datetime()[5]
-second  = ds.datetime()[6]
-print(year, month, day, hour, minute, second)
-
-
-def clock_display():
-
-    while True:
-        bg_image = display.bg_image_generate(50)
-
-  #      print(bg_image)
-        hour    = ds.datetime()[4]
-        minute  = ds.datetime()[5]
-        second  = ds.datetime()[6]
-        hour_image      = Font.genTextImage(text = '{:02}'.format(hour),font = "number3x5p")
-        colon_image     = Font.genTextImage(text = "  ", font = "propotional")
-        minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
-        sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
-
-        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
-
-        display.setImage(clock_image)
-        #time.sleep_ms(10)
-
-#=====================================================================================================
-
-# テキスト表示テスト
-
-"""
-# テキストイメージ表示
 text_image = Font.genTextImage(text = "A",font = "propotional")
 bg_image = display.bg_image_generate(200)
-image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
-display.setImage(image)
+start_image = display.textOverlay(bg_image, text_image, offset = [5,5],text_color = 50, transparent = True)
+text_image = Font.genTextImage(text = "B",font = "propotional")
+bg_image = display.bg_image_generate(200)
+finish_image = display.textOverlay(bg_image, text_image, offset = [5,5],text_color = 50, transparent = True)
+film = display.interpolation(start_image,finish_image,60)
+
+for i in range(len(film)):
+    display.setImage(film[i])
+#    time.sleep_ms(10)
+
+#display.setImage(start_image)
+#time.sleep_ms(1000)
+#display.setImage(finish_image)
 time.sleep_ms(2000)
-"""
-
-"""
-# テキストイメージスクロール表示
-#time.sleep_ms(5000)
-text_image = Font.genTextImage(text = "        hello world",font = "propotional")
-#text_image = Font.genTextImage(text = "ABC",font = "propotional")
-print(text_image)
-for x in range(len(text_image)):
-
-    bg_image = display.bg_image_generate(50)
-    print(x,bg_image)
-    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = 200, transparent = True)
-#    print(image)
-#    for i in range(len(image)):
-#        print(image[i])
-    display.setImage(image)
-    time.sleep_ms(10)
-"""
-
-"""
-# 4bit wave表示
-
-l16 = [16,16,16,16,16,16,16,16]
-l15 = [15,15,15,15,15,15,15,15]
-l14 = [14,14,14,14,14,14,14,14]
-l13 = [13,13,13,13,13,13,13,13]
-l12 = [12,12,12,12,12,12,12,12]
-l11 = [11,11,11,11,11,11,11,11]
-l10 = [10,10,10,10,10,10,10,10]
-l9 = [9,9,9,9,9,9,9,9]
-l8 = [8,8,8,8,8,8,8,8]
-l7 = [7,7,7,7,7,7,7,7]
-l6 = [6,6,6,6,6,6,6,6]
-l5 = [5,5,5,5,5,5,5,5]
-l4 = [4,4,4,4,4,4,4,4]
-l3 = [3,3,3,3,3,3,3,3]
-l2 = [2,2,2,2,2,2,2,2]
-l1 = [1,1,1,1,1,1,1,1]
-l0 = [0,0,0,0,0,0,0,0]
-
-image = [l16,l16,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l16,l16,l8]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l16,l8,l9]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l8,l9,l10]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l8,l9,l10,l11]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l8,l9,l10,l11,l12]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l8,l9,l10,l11,l12,l13]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l8,l9,l10,l11,l12,l13,l14]
-display.setImage(image)
-
-for i in range(1):
-    time.sleep_ms(100)
-    image = [l8,l9,l10,l11,l12,l13,l14,l15]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l9,l10,l11,l12,l13,l14,l15,l0]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l10,l11,l12,l13,l14,l15,l0,l1]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l11,l12,l13,l14,l15,l0,l1,l2]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l12,l13,l14,l15,l0,l1,l2,l3]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l13,l14,l15,l0,l1,l2,l3,l4]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l14,l15,l0,l1,l2,l3,l4,l5]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l15,l0,l1,l2,l3,l4,l5,l6]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l0,l1,l2,l3,l4,l5,l6,l7]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l1,l2,l3,l4,l5,l6,l7,l8]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l2,l3,l4,l5,l6,l7,l8,l9]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l3,l4,l5,l6,l7,l8,l9,l10]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l4,l5,l6,l7,l8,l9,l10,l11]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l5,l6,l7,l8,l9,l10,l11,l12]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l6,l7,l8,l9,l10,l11,l12,l13]
-    display.setImage(image)
-
-    time.sleep_ms(100)
-    image = [l7,l8,l9,l10,l11,l12,l13,l14]
-    display.setImage(image)
-
-
-
-
-
-
-
-
-time.sleep_ms(100)
-image = [l8,l9,l10,l11,l12,l13,l14,l15]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l9,l10,l11,l12,l13,l14,l15,l0]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l10,l11,l12,l13,l14,l15,l0,l1]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l11,l12,l13,l14,l15,l0,l1,l2]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l12,l13,l14,l15,l0,l1,l2,l3]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l13,l14,l15,l0,l1,l2,l3,l4]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l14,l15,l0,l1,l2,l3,l4,l5]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l15,l0,l1,l2,l3,l4,l5,l6]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l0,l1,l2,l3,l4,l5,l6,l7]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l1,l2,l3,l4,l5,l6,l7,l16]
-display.setImage(image)
-time.sleep_ms(100)
-image = [l2,l3,l4,l5,l6,l7,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l3,l4,l5,l6,l7,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l4,l5,l6,l7,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l5,l6,l7,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l6,l7,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l7,l16,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-
-time.sleep_ms(100)
-image = [l16,l16,l16,l16,l16,l16,l16,l16]
-display.setImage(image)
-"""
-
-"""
-for i in range(gray_scale_level):
-    display.setPixel([7,7],i)
-#    print(i)
-    time.sleep_ms(12)
-#time.sleep_ms(100)
-
-for i in range(gray_scale_level):
-    display.setPixel([7,7],gray_scale_level - 1 - i)
-#    print(i)
-    time.sleep_ms(12)
-
-#time.sleep_ms(100)
-
-for i in range(gray_scale_level):
-    display.setPixel([7,7],i)
-#    print(i)
-    time.sleep_ms(12)
-time.sleep_ms(100)
-display.setPixel([7,7],gray_scale_level)
-"""
-
-
-# カメラ画像表示
-"""
-while True:
-    if button_a.value() == 0:
-        break
-
-    camera_image = sensor.snapshot()         # Take a picture and return the image.
-    camera_image = camera_image.copy((20,0,140,120))
-    camera_image = camera_image.resize(pixel_layout[0], pixel_layout[1])
-    for x in range(pixel_layout[0]):
-        for y in range(pixel_layout[1]):
-            p = camera_image.get_pixel(x,y)
-            display.setPixel([x,y],p)
-            #print(p)
-    time.sleep_ms(100)
-
-"""
-"""
-for y in range(pixel_layout[1]):
-    for x in range(pixel_layout[0]):
-        display.setPixel([x, y],gray_scale_level -1)
-        time.sleep_ms(100)
-        display.setPixel([x, y])
-"""
-#display.setPixel([15,3],0)
-#"""
-display.maxPosition()
-time.sleep_ms(1000)
-#display.flatPosition()
-#time.sleep_ms(100)
-#"""
 
 
 
 display.flatPosition()
 time.sleep_ms(1000)
-clock_display()
 
 display.release()
