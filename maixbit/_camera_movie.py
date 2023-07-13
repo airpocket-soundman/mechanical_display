@@ -170,7 +170,7 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        print("old_image")
+        #print("old_image")
         for x in range(self.pixel_layout[0]):
             list = []
             for y in range(self.pixel_layout[1]):
@@ -493,10 +493,10 @@ while True:
     camera_image = camera_image.resize(pixel_layout[0], pixel_layout[1])
     for x in range(pixel_layout[0]):
         for y in range(pixel_layout[1]):
-            p = camera_image.get_pixel(x,y)
+            p = 255-camera_image.get_pixel(x,y)
             display.setPixel([x,y],p)
             #print(p)
-    time.sleep_ms(100)
+    #time.sleep_ms(50)
 
 """
 for y in range(pixel_layout[1]):

@@ -731,6 +731,6 @@ time.sleep_ms(1000)
 
 display.flatPosition()
 time.sleep_ms(1000)
-clock_display()
+#clock_display()
 
 display.release()

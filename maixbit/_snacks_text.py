@@ -5,7 +5,7 @@ import servo
 import font
 import ds3231
 
-from Maix import GPIOf
+from Maix import GPIO
 #from fpioa_manager import fm, board_info
 #import lcd
 #import sensor
@@ -170,7 +170,7 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        print("old_image")
+        #print("old_image")
         for x in range(self.pixel_layout[0]):
             list = []
             for y in range(self.pixel_layout[1]):
@@ -194,6 +194,8 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
+                else:
+                    time.sleep_us(100)
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
 
@@ -308,10 +310,10 @@ class mechanical_display:
                         if transparent == False:
                             image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
                         else:
-                            print(x,y,text_image[x][y])
+                            #print(x,y,text_image[x][y])
                             if text_image[x][y] == 1:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-        print(image)
+        #print(image)
         return image
 
 #コマ間を補完するメソッド
@@ -414,6 +416,15 @@ def sec_display():
 
 #=====================================================================================================
 
+#8bit gray scale 表示
+
+def gray_scale_demo():
+    color = 255
+    for x in range(16):
+        for y in range(16):
+            display.setPixel([x, y],color)
+            color -= 1
+
 # テキスト表示テスト
 base_color = 50
 text_color = 200
@@ -434,8 +445,12 @@ time.sleep_ms(1000)
 
 
 # テキストイメージ表示
+
+# count down 3to1
 text_image = Font.genTextImage(text = "3",font = "propotional")
 bg_image = display.bg_image_generate(200)
+display.setImage(bg_image)
+time.sleep_ms(1000)
 image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
 display.setImage(image)
 time.sleep_ms(1000)
@@ -452,22 +467,14 @@ image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50
 display.setImage(image)
 time.sleep_ms(1000)
 
-text_image = Font.genTextImage(text = " ",font = "propotional")
-bg_image = display.bg_image_generate(200)
-image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
-display.setImage(image)
-time.sleep_ms(1000)
-
-
-
 #"""
 # テキストイメージスクロール表示 Mouser
 #time.sleep_ms(5000)
 base_color = 50
 text_color = 200
 
-ss = 1
-ds = 0
+ss = 0
+ds = 1
 
 mouser_logo_image = [[ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
                      [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
@@ -508,6 +515,8 @@ print("mouser")
 stop_counter = 17
 counter = 0
 bg_image = display.bg_image_generate(base_color)
+display.setImage(bg_image)
+time.sleep_ms(2000)
 for x in range(len(mouser_logo_image)+1):
     if counter == stop_counter:
         time.sleep_ms(5000)
@@ -518,127 +527,92 @@ for x in range(len(mouser_logo_image)+1):
 
 time.sleep_ms(1000)
 
-text_image = Font.genTextImage(text = "        MOUSER MAKE AWARDS 2023    Mechanical Display",font = "propotional")
+text_image = Font.genTextImage(text = "        MOUSER MAKE AWARDS 2023",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
 for x in range(len(text_image)):
     bg_image = display.bg_image_generate(base_color)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
-#    print("image", x)
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
 time.sleep_ms(200)
 
-text_image = Font.genTextImage(text = "        This is The True Color Display!! :-)",font = "propotional")
+text_image = Font.genTextImage(text = "            8BIT GRAY SCALE MECHANICAL DISPLAY :-)",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
 for x in range(len(text_image)):
     bg_image = display.bg_image_generate(base_color)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
-#    print("image", x)
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
+
+time.sleep_ms(1000)
+gray_scale_demo()
 
 time.sleep_ms(5000)
+bg_image = display.bg_image_generate(base_color)
+display.setImage(bg_image)
+time.sleep_ms(1000)
 
 
 # for snacks
 
 print("snacks")
-text_image = Font.genTextImage(text = "        SNACKS Vol.5 (>_0)    Mechanical Display",font = "propotional")
+text_image = Font.genTextImage(text = "        2023.7.17  SNACKS Vol.5 (>_0)",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
 for x in range(len(text_image)):
     bg_image = display.bg_image_generate(base_color)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
-#    print("image", x)
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
 time.sleep_ms(200)
 
-text_image = Font.genTextImage(text = "        This is The True Color Display!! :-)",font = "propotional")
+text_image = Font.genTextImage(text = "        MECHANICAL DISPLAY  8BIT GRAY SCALE VERSION.",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
 for x in range(len(text_image)):
     bg_image = display.bg_image_generate(base_color)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
-#    print("image", x)
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
+
+time.sleep_ms(1000)
+gray_scale_demo()
+
 
 time.sleep_ms(5000)
+bg_image = display.bg_image_generate(base_color)
+display.setImage(bg_image)
+time.sleep_ms(1000)
 
 # for hackaday
 
-text_image = Font.genTextImage(text = "        Hackaday Prize 2023   Mechanical Display",font = "propotional")
+text_image = Font.genTextImage(text = "        HACKADAY PRIZE 2023",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
 for x in range(len(text_image)):
     bg_image = display.bg_image_generate(base_color)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
-#    print("image", x)
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
 time.sleep_ms(200)
 
-text_image = Font.genTextImage(text = "        This is The True Color Display!! :-)",font = "propotional")
+text_image = Font.genTextImage(text = "        8BIT GRAY SCALE MECHANICAL DISPLAY :-)",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
 for x in range(len(text_image)):
     bg_image = display.bg_image_generate(base_color)
     image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
-#    print("image", x)
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
+
+time.sleep_ms(1000)
+gray_scale_demo()
 
 time.sleep_ms(5000)
-
-# sunset & daskey
-
-text_image = Font.genTextImage(text = "        Sunset & Duskey",font = "propotional")
 bg_image = display.bg_image_generate(base_color)
-print(text_image)
-for x in range(len(text_image)):
-    bg_image = display.bg_image_generate(base_color)
-    image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
-#    print("image", x)
-    display.setImage(image)
-    time.sleep_ms(200)
+display.setImage(bg_image)
+time.sleep_ms(1000)
 
-time.sleep_ms(5000)
-
-# sunset & night sky
-
-text_image = Font.genTextImage(text = "        Sunset & Night Sky",font = "propotional")
-bg_image = display.bg_image_generate(base_color)
-print(text_image)
-for x in range(len(text_image)):
-    bg_image = display.bg_image_generate(base_color)
-    image = display.textOverlay(bg_image, text_image, offset = [-x, 10], text_color = text_color, transparent = True)
-#    print("image", x)
-    display.setImage(image)
-    time.sleep_ms(200)
-
-time.sleep_ms(5000)
-
-
-# sky blue & forest green
-
-text_image = Font.genTextImage(text = "        Sky Blue & Forest Green",font = "propotional")
-bg_image = display.bg_image_generate(base_color)
-print(text_image)
-for x in range(len(text_image)):
-    bg_image = display.bg_image_generate(base_color)
-    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
-#    print("image", x)
-    display.setImage(image)
-    time.sleep_ms(200)
-
-time.sleep_ms(5000)
 
 #color flash
 
@@ -658,8 +632,8 @@ for y in range(pixel_layout[1]):
     for x in range(pixel_layout[0]):
         display.setPixel([x, y],base_color)
     time.sleep_ms(100)
-
-#display.flatPosition()
+time.sleep_ms(1000)
+display.flatPosition()
 time.sleep_ms(1000)
 #sec_display()
 

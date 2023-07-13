@@ -5,7 +5,7 @@ import servo
 #import font
 import dot_image
 import ds3231
-from maixbit.lib.dot_image import dot_image
+#from dot_image import dot_image
 
 from Maix import GPIO
 
@@ -169,7 +169,7 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        print("old_image")
+        #print("old_image")
         for x in range(self.pixel_layout[0]):
             list = []
             for y in range(self.pixel_layout[1]):
@@ -194,7 +194,7 @@ class mechanical_display:
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
                 else:
-                    time.sleep_us(500)
+                    time.sleep_us(10)
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
 
@@ -313,12 +313,12 @@ class mechanical_display:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
         #print(image)
         return image
-    
+
 #イメージを上下左右にシフトする
-    def shift_image(image, shift_x, shift_y):
+    def shift_image(self, image, shift_x, shift_y):
         size_x = len(image)
         size_y = len(image[0])
-        
+
         # シフト後の行列を作成し、0で初期化する
         shifted_image = [[0] * size_x for _ in range(size_y)]
         for x in range(size_x):
@@ -376,9 +376,9 @@ class mechanical_display:
                         plist.append(pairs)
                 print(plist)
                 fade_pattern.append(plist)
-            
+
             return fade_pattern
-            
+
 
 
 
@@ -402,7 +402,7 @@ print("address is :" + str(addr1))
 display = mechanical_display(i2c0, i2c1, unit_layout, servo_layout, gray_scale_bit_value)
 
 #5Pフォントのインスタンス生成
-Font = font.font_5P()
+#Font = font.font_5P()
 
 #flatポジションを表示する。
 display.flatPosition()
@@ -441,13 +441,10 @@ for x in range(len(text_image)):
 
 #standingを表示
 Image = dot_image.dot_image()
-
+display.minPosition()
+time.sleep_ms(1000)
 image = Image.genImage(image_name = "standing")
-
-#for x in range(len(image)):
-#    print(image[x])
-
-display.setImage(image)
+#display.setImage(image)
 time.sleep_ms(3000)
 
 display.minPosition()
@@ -456,126 +453,153 @@ display.minPosition()
 # marioが上から落ちてくる
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,15)
-display.setImage(image)
-time.sleep_ms(300)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,14)
-display.setImage(image)
-time.sleep_ms(200)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,12)
-display.setImage(image)
-time.sleep_ms(200)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,8)
-display.setImage(image)
-time.sleep_ms(200)
+shifted_image = display.shift_image(image,0,9)
+display.setImage(shifted_image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "standing")
+shifted_image = display.shift_image(image,0,5)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
+time.sleep_ms(100)
+"""
+image = Image.genImage(image_name = "standing")
+shifted_image = display.shift_image(image,0,3)
+display.setImage(shifted_image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "standing")
+shifted_image = display.shift_image(image,0,5)
+display.setImage(shifted_image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "standing")
+shifted_image = display.shift_image(image,0,6)
+display.setImage(shifted_image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "standing")
+shifted_image = display.shift_image(image,0,5)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,3)
-display.setImage(image)
-time.sleep_ms(200)
-
+display.setImage(shifted_image)
+time.sleep_ms(100)
+"""
 image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,5)
-display.setImage(image)
-time.sleep_ms(200)
-
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,6)
-display.setImage(image)
-time.sleep_ms(200)
-
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,5)
-display.setImage(image)
-time.sleep_ms(200)
+shifted_image = display.shift_image(image,0,2)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,3)
-display.setImage(image)
-time.sleep_ms(200)
+display.setImage(shifted_image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "standing")
+shifted_image = display.shift_image(image,0,2)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
-time.sleep_ms(200)
+display.setImage(shifted_image)
+time.sleep_ms(1000)
 
 
 #marioが右に歩く
 
 image = Image.genImage(image_name = "run1")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "run1")
+display.setImage(image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "run2")
+display.setImage(image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "run1")
+display.setImage(image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "run2")
+display.setImage(image)
+time.sleep_ms(100)
+
+image = Image.genImage(image_name = "run1")
+display.setImage(image)
+time.sleep_ms(100)
 
 #立ち止まる
 
 image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
 time.sleep_ms(1000)
 
@@ -583,240 +607,246 @@ time.sleep_ms(1000)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(200)
+time.sleep_ms(100)
+
 
 # 走る
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
+
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run1")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
 
 image = Image.genImage(image_name = "run2")
 image.reverse()
-shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(100)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run1")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run2")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run1")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run2")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run1")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run2")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run1")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
+
+image = Image.genImage(image_name = "run2")
+image.reverse()
+display.setImage(image)
+time.sleep_ms(10)
 
 #急停止
 image = Image.genImage(image_name = "turn")
-image.reverse()
+#image.reverse()
 shifted_image = display.shift_image(image,0,0)
 display.setImage(image)
-time.sleep_ms(2000)
+time.sleep_ms(1000)
 
 #立つ
 image = Image.genImage(image_name = "standing")
-image.reverse()
-shifted_image = display.shift_image(image,0,0)
+#image.reverse()
 display.setImage(image)
 time.sleep_ms(3000)
 
 #死ぬ
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
-time.sleep_ms(500)
+display.setImage(shifted_image)
+time.sleep_ms(1500)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,4)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,6)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,7)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,6)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,4)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
-time.sleep_ms(500)
+display.setImage(shifted_image)
+time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,-9)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
+display.setImage(shifted_image)
 time.sleep_ms(100)
 
 image = Image.genImage(image_name = "dead")
 shifted_image = display.shift_image(image,0,16)
-shifted_image = display.shift_image(image,0,0)
-display.setImage(image)
-time.sleep_ms(5000)
+display.setImage(shifted_image)
+time.sleep_ms(1500)
 
 #for y in range(pixel_layout[1]):
 #    for x in range(pixel_layout[0]):
@@ -828,7 +858,7 @@ fade_pattern = display.gen_fade_pattern(type = "UpLeft to DownRight")
 for i in range(len(fade_pattern)):
     for j in range(len(fade_pattern[i])):
         display.setPixel(coordinate = fade_pattern[i][j], value = gray_scale_level)
-        time.sleep_ms(100)
+    time.sleep_ms(100)
 
 
 #display.flatPosition()

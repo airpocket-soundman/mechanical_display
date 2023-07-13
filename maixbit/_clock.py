@@ -3,11 +3,12 @@ import time
 import pca9685
 import servo
 import font
-import dot_image
 import ds3231
-from dot_image import dot_image
 
 from Maix import GPIO
+#from fpioa_manager import fm, board_info
+#import lcd
+#import sensor
 
 class mechanical_display:
     def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
@@ -169,7 +170,7 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        #print("old_image")
+        print("old_image")
         for x in range(self.pixel_layout[0]):
             list = []
             for y in range(self.pixel_layout[1]):
@@ -314,29 +315,6 @@ class mechanical_display:
         #print(image)
         return image
 
-#イメージを上下左右にシフトする
-    def shift_image(image, shift_x, shift_y):
-        size_x = len(image)
-        size_y = len(image[0])
-
-        # シフト後の行列を作成し、0で初期化する
-        shifted_image = [[0] * size_x for _ in range(size_y)]
-        for x in range(size_x):
-            for y in range(size_y):
-                # シフト後のインデックスを計算する
-                shifted_x = (x + shift_x)
-                shifted_y = (y + shift_y)
-                if shifted_x < 0:
-                    shifted_x = size_x
-                if shifted_y < 0:
-                    shifted_y = size_y
-                try:
-                    shifted_image[x][y] = image[shifted_x][shifted_y]
-                except:
-                    pass
-
-        return shifted_image
-
 #コマ間を補完するメソッド
     def interpolation(self, start_image, finish_image, frame_number):
         if len(start_image) != len(finish_image) or len(start_image[0]) != len(finish_image[0]):
@@ -361,26 +339,34 @@ class mechanical_display:
                     image[x][y] = self.gray_scale_level - image[x][y] - 1
         return image
 
-    def gen_fade_pattern(self, type = "UpLeft to DownRight"):
-        if type == "UpLeft to DownRight":
-            xMax = self.pixel_layout[0]
-            yMax = self.pixel_layout[1]
-            fade_pattern = []
 
-            for x in range(xMax * 2 - 1):
-                plist = []
-                for y in range(yMax):
-                    pairs = [y,x-y]
-                    if pairs[0] >= 0 and pairs[0] < xMax and pairs[1] >= 0 and pairs[1] <yMax:
-                        print(pairs,x,y)
-                        plist.append(pairs)
-                print(plist)
-                fade_pattern.append(plist)
+#=======================================================================================================================
 
-            return fade_pattern
+#ボタン設定
+#fm.register(board_info.BUTTON_A, fm.fpioa.GPIO1)
+#button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
+#fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
+#button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
 
+"""
+#LCD設定
+lcd.init(freq=15000000)
+lcd.direction(lcd.YX_LRDU)
 
+#カメラ設定
+sensor.reset()                      # Reset and initialize the sensor. It will
+                                    # run automatically, call sensor.run(0) to stop
+sensor.set_pixformat(sensor.GRAYSCALE) # Set pixel format to RGB565 (or GRAYSCALE)
+sensor.set_framesize(sensor.QQVGA)   # Set frame size to QVGA (320x240) QQVGA (160x120)
+sensor.skip_frames(time = 2000)     # Wait for settings take effect.
+sensor.set_contrast(+2)             # Contrast +2 to -2
+#sensor.set_brightness(-2)           # Brightness +2 to -2
+#sensor.set_saturation(-2)           # Saturation +2 to -2
+sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
+#sensor.set_vflip(1)                 # 1:enable 0:disable
+sensor.set_hmirror(1)                 # 1:enable 0:disable
 
+"""
 
 #displayのUnit配置数定義
 unit_layout  = [4, 4]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
@@ -388,6 +374,8 @@ servo_layout = [4, 4]
 pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[1]]
 gray_scale_bit_value = 8
 gray_scale_level = 2**gray_scale_bit_value
+
+
 
 #I2C　初期化
 i2c0 = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
@@ -407,6 +395,61 @@ Font = font.font_5P()
 #flatポジションを表示する。
 display.flatPosition()
 time.sleep_ms(300)
+
+
+
+#=====================================================================================================
+#RTCのインスタンスを生成
+ds = ds3231.DS3231(i2c1)
+
+"""
+#RTCの時間設定
+year    = 2023 # Can be yyyy or yy format
+month   = 7
+mday    = 4
+hour    = 15 # 24 hour format only
+minute  = 28
+second  = 30 # Optional
+weekday = 2 # Optional
+
+datetime = (year, month, mday, hour, minute, second, weekday)
+ds.datetime(datetime)
+print(ds.datetime())
+"""
+
+#現在時刻をRTCから読み取って表示
+year    = ds.datetime()[0]
+month   = ds.datetime()[1]
+day     = ds.datetime()[2]
+hour    = ds.datetime()[4]
+minute  = ds.datetime()[5]
+second  = ds.datetime()[6]
+print(year, month, day, hour, minute, second)
+
+
+def clock_display():
+
+    while True:
+        bg_image = display.bg_image_generate(50)
+
+  #      print(bg_image)
+        hour    = ds.datetime()[4]
+        minute  = ds.datetime()[5]
+        second  = ds.datetime()[6]
+        hour_image      = Font.genTextImage(text = '{:02}'.format(hour),font = "number3x5p")
+        colon_image     = Font.genTextImage(text = "  ", font = "propotional")
+        minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
+        sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
+
+        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
+
+        display.setImage(clock_image)
+        #time.sleep_ms(10)
+
+#=====================================================================================================
 
 # テキスト表示テスト
 
@@ -437,73 +480,257 @@ for x in range(len(text_image)):
     time.sleep_ms(10)
 """
 
-def initialize_board():
-    # 初期状態の盤面を生成する
-    board = [[0] * 16 for _ in range(16)]
+"""
+# 4bit wave表示
 
-    # 盤面の一部を初期配置として設定する
-    board[5][6] = 1
-    board[6][7] = 1
-    board[7][5] = 1
-    board[7][6] = 1
-    board[7][7] = 1
+l16 = [16,16,16,16,16,16,16,16]
+l15 = [15,15,15,15,15,15,15,15]
+l14 = [14,14,14,14,14,14,14,14]
+l13 = [13,13,13,13,13,13,13,13]
+l12 = [12,12,12,12,12,12,12,12]
+l11 = [11,11,11,11,11,11,11,11]
+l10 = [10,10,10,10,10,10,10,10]
+l9 = [9,9,9,9,9,9,9,9]
+l8 = [8,8,8,8,8,8,8,8]
+l7 = [7,7,7,7,7,7,7,7]
+l6 = [6,6,6,6,6,6,6,6]
+l5 = [5,5,5,5,5,5,5,5]
+l4 = [4,4,4,4,4,4,4,4]
+l3 = [3,3,3,3,3,3,3,3]
+l2 = [2,2,2,2,2,2,2,2]
+l1 = [1,1,1,1,1,1,1,1]
+l0 = [0,0,0,0,0,0,0,0]
 
-    return board
+image = [l16,l16,l16,l16,l16,l16,l16,l16]
+display.setImage(image)
 
-def print_board(board):
-    # 盤面を表示する
-    bg_image = display.bg_image_generate(255)
-    image = display.textOverlay(bg_image, board, offset = [0, 0], text_color = 0, transparent = True)
+time.sleep_ms(100)
+image = [l16,l16,l16,l16,l16,l16,l16,l8]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l16,l16,l16,l16,l16,l8,l9]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l16,l16,l16,l16,l8,l9,l10]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l16,l16,l16,l8,l9,l10,l11]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l16,l16,l8,l9,l10,l11,l12]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l16,l8,l9,l10,l11,l12,l13]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l8,l9,l10,l11,l12,l13,l14]
+display.setImage(image)
+
+for i in range(1):
+    time.sleep_ms(100)
+    image = [l8,l9,l10,l11,l12,l13,l14,l15]
     display.setImage(image)
-    for row in board:
-        for cell in row:
-            if cell == 0:
-                print(".", end=" ")
-            else:
-                print("O", end=" ")
-        print()
-    print()
 
-def count_neighbors(board, row, col):
-    # 指定されたセルの周囲の生存セルの数を数える
-    count = 0
-    for i in range(row - 1, row + 2):
-        for j in range(col - 1, col + 2):
-            if (i, j) != (row, col):
-                # 周期境界条件を適用する
-                neighbor_row = (i + 16) % 16
-                neighbor_col = (j + 16) % 16
-                count += board[neighbor_row][neighbor_col]
-    return count
+    time.sleep_ms(100)
+    image = [l9,l10,l11,l12,l13,l14,l15,l0]
+    display.setImage(image)
 
-def update_board(board):
-    # 盤面を更新する
-    new_board = [[0] * 16 for _ in range(16)]
+    time.sleep_ms(100)
+    image = [l10,l11,l12,l13,l14,l15,l0,l1]
+    display.setImage(image)
 
-    for i in range(16):
-        for j in range(16):
-            count = count_neighbors(board, i, j)
-            if board[i][j] == 1 and (count == 2 or count == 3):
-                new_board[i][j] = 1
-            elif board[i][j] == 0 and count == 3:
-                new_board[i][j] = 1
+    time.sleep_ms(100)
+    image = [l11,l12,l13,l14,l15,l0,l1,l2]
+    display.setImage(image)
 
-    return new_board
+    time.sleep_ms(100)
+    image = [l12,l13,l14,l15,l0,l1,l2,l3]
+    display.setImage(image)
 
-def run_life_game():
-    # Life Gameを実行する
-    board = initialize_board()
-    print("Initial state:")
-    print_board(board)
+    time.sleep_ms(100)
+    image = [l13,l14,l15,l0,l1,l2,l3,l4]
+    display.setImage(image)
 
-    for generation in range(100):
-        board = update_board(board)
-        print("Generation:",generation)
-        print_board(board)
+    time.sleep_ms(100)
+    image = [l14,l15,l0,l1,l2,l3,l4,l5]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l15,l0,l1,l2,l3,l4,l5,l6]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l0,l1,l2,l3,l4,l5,l6,l7]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l1,l2,l3,l4,l5,l6,l7,l8]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l2,l3,l4,l5,l6,l7,l8,l9]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l3,l4,l5,l6,l7,l8,l9,l10]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l4,l5,l6,l7,l8,l9,l10,l11]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l5,l6,l7,l8,l9,l10,l11,l12]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l6,l7,l8,l9,l10,l11,l12,l13]
+    display.setImage(image)
+
+    time.sleep_ms(100)
+    image = [l7,l8,l9,l10,l11,l12,l13,l14]
+    display.setImage(image)
+
+
+
+
+
+
+
+
+time.sleep_ms(100)
+image = [l8,l9,l10,l11,l12,l13,l14,l15]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l9,l10,l11,l12,l13,l14,l15,l0]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l10,l11,l12,l13,l14,l15,l0,l1]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l11,l12,l13,l14,l15,l0,l1,l2]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l12,l13,l14,l15,l0,l1,l2,l3]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l13,l14,l15,l0,l1,l2,l3,l4]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l14,l15,l0,l1,l2,l3,l4,l5]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l15,l0,l1,l2,l3,l4,l5,l6]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l0,l1,l2,l3,l4,l5,l6,l7]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l1,l2,l3,l4,l5,l6,l7,l16]
+display.setImage(image)
+time.sleep_ms(100)
+image = [l2,l3,l4,l5,l6,l7,l16,l16]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l3,l4,l5,l6,l7,l16,l16,l16]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l4,l5,l6,l7,l16,l16,l16,l16]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l5,l6,l7,l16,l16,l16,l16,l16]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l6,l7,l16,l16,l16,l16,l16,l16]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l7,l16,l16,l16,l16,l16,l16,l16]
+display.setImage(image)
+
+time.sleep_ms(100)
+image = [l16,l16,l16,l16,l16,l16,l16,l16]
+display.setImage(image)
+"""
+
+"""
+for i in range(gray_scale_level):
+    display.setPixel([7,7],i)
+#    print(i)
+    time.sleep_ms(12)
+#time.sleep_ms(100)
+
+for i in range(gray_scale_level):
+    display.setPixel([7,7],gray_scale_level - 1 - i)
+#    print(i)
+    time.sleep_ms(12)
+
+#time.sleep_ms(100)
+
+for i in range(gray_scale_level):
+    display.setPixel([7,7],i)
+#    print(i)
+    time.sleep_ms(12)
+time.sleep_ms(100)
+display.setPixel([7,7],gray_scale_level)
+"""
+
+
+# カメラ画像表示
+"""
+while True:
+    if button_a.value() == 0:
+        break
+
+    camera_image = sensor.snapshot()         # Take a picture and return the image.
+    camera_image = camera_image.copy((20,0,140,120))
+    camera_image = camera_image.resize(pixel_layout[0], pixel_layout[1])
+    for x in range(pixel_layout[0]):
+        for y in range(pixel_layout[1]):
+            p = camera_image.get_pixel(x,y)
+            display.setPixel([x,y],p)
+            #print(p)
+    time.sleep_ms(100)
+
+"""
+"""
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],gray_scale_level -1)
         time.sleep_ms(100)
-run_life_game()
-
-#display.flatPosition()
+        display.setPixel([x, y])
+"""
+#display.setPixel([15,3],0)
+#"""
+display.maxPosition()
 time.sleep_ms(1000)
+#display.flatPosition()
+#time.sleep_ms(100)
+#"""
+
+
+
+display.flatPosition()
+time.sleep_ms(1000)
+clock_display()
 
 display.release()
