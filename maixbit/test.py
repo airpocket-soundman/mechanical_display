@@ -1,79 +1,49 @@
-import font
-
-def fontOverlay(bg_image, font_image ,coordinate, font_color = None, transparent = True):
-    if font_color == None:
-        font_color = 15 
-    bg_size = [len(bg_image), len(bg_image[0])]
-    font_size = [len(font_image), len(font_image[0])]
-
-    image = bg_image
-
-    for y in range(font_size[1]):
-        if y + coordinate[1] < bg_size[1]:
-            for x in range(font_size[0]):
-                if x + coordinate[0] < bg_size[0]:
-                    #print("x,y",x,y)
-                    if transparent == False:
-                        image[x + coordinate[0]][y + coordinate[1]] = font_image[x][y] * font_color
-                    else:
-                        if font_image[x][y] == 1:
-                            image[x + coordinate[0]][y + coordinate[1]] = font_image[x][y] * font_color
-    return image
-
-def textOverlay(text_image ,offset = [0,0], text_color = None, bg_color = None, transparent = True):
-    if text_color == None:
-        text_color = 15 # = self.gray_scale_color -1
-    if bg_color == None:
-        bg_color = 0
-    text_size = [len(text_image), len(text_image[0])]
-    display_size = [8, 8] #self.pixel_layout
-
-    image = []
-
-    for y in range(display_size[1]):
-        list = []
-        for x in range(display_size[0]):
-            list.append(bg_color)
-        image.append(list)
-
-    for y in range(text_size[1]): 
-        if y + offset[1] < display_size[1] and y + offset[1] >= 0: 
-            for x in range(text_size[0]): 
-                if x + offset[0] < display_size[0] and x + offset[0] >= 0:
-                    if transparent == False:
-                        image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-                    else:
-                        if text_image[x][y] == 1:
-                            image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-    return image                    
-
-
-Font = font.font_5P()
-
-text_image = Font.genTextImage(text = "    AAC",monospace = False)
-print("text image")
-for y in range(len(text_image)):
-    print(text_image[y])
 """
-background = [[5,5,5,5,5,5],
-              [5,5,5,5,5,5],
-              [5,5,5,5,5,5],
-              [5,5,5,5,5,5],
-              [5,5,5,5,5,5],
-              [5,5,5,5,5,5],
-              [5,5,5,5,5,5]]
-
-print("background")
-for y in range(len(background)):
-    print(background[y])
-
-image = fontOverlay(background, text_image, [0,0], 1)
+fade_type = {   "UpRight to DownLeft"    :   [[[ 0, 0]],
+                                              [[ 0, 1],[ 1, 0]],
+                                              [[ 0, 2],[ 1, 1],[ 2, 0]],
+                                              [[ 0, 3],[ 1, 2],[ 2, 1],[ 3, 0]],
+                                              [[ 0, 4],[ 1, 3],[ 2, 2],[ 3, 1],[ 4, 0]],
+                                              [[ 0, 5],[ 1, 4],[ 2, 3],[ 3, 2],[ 4 ,1],[ 5, 0]],
+                                              [[ 0, 6],[ 1, 5],[ 2, 4],[ 3, 3],[ 4, 2],[ 5, 1],[ 6, 0]],
+                                              [[ 0, 7],[ 1, 6],[ 2, 5],[ 3, 4],[ 4, 3],[ 5, 2],[ 6, 1],[ 7, 0]],
+                                              [[ 0, 8],[ 1, 7],[ 2, 6],[ 3, 5],[ 4, 4],[ 5, 3],[ 6, 2],[ 7, 1],[ 8, 0]],
+                                              [[ 0, 9],[ 1, 8],[ 2, 7],[ 3, 6],[ 4, 5],[ 5, 4],[ 6, 3],[ 7, 2],[ 8, 1],[ 9, 0]],
+                                              [[ 0,10],[ 1, 9],[ 2, 8],[ 3, 7],[ 4, 6],[ 5, 5],[ 6, 4],[ 7, 3],[ 8, 2],[ 9, 1],[10, 0]],
+                                              [[ 0,11],[ 1,10],[ 2, 9],[ 3, 8],[ 4, 7],[ 5, 6],[ 6, 5],[ 7, 4],[ 8, 3],[ 9, 2],[10, 1],[11, 0]],
+                                              [[ 0,12],[ 1,11],[ 2,10],[ 3, 9],[ 4, 8],[ 5, 7],[ 6, 6],[ 7, 5],[ 8, 4],[ 9, 3],[10, 2],[11, 1],[12, 0]],
+                                              [[ 0,13],[ 1,12],[ 2,11],[ 3,10],[ 4, 9],[ 5, 8],[ 6, 7],[ 7, 6],[ 8, 5],[ 9, 4],[10, 3],[11, 2],[12, 1],[13, 0]],
+                                              [[ 0,14],[ 1,13],[ 2,12],[],[],[],[],[],[],[],[],[],[],[],[]],
+                                              [[ 0,15],[ 1,14],[ 2,13],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+                                              [[ 1,15],[ 2,14],[ 3,13],[],[],[],[],[],[],[],[],[],[],[],[]],
+                                              [[ 2,15],[ 3,14],[ 4,13],[],[],[],[],[],[],[],[],[],[],[]],
+                                              [[ 3,15],[ 4,14],[ 5,13],[],[],[],[],[],[],[],[],[],[]],
+                                              [[ 4,15],[ 5,14],[ 6,13],[],[],[],[],[],[],[],[],[]],
+                                              [[ 5,15],[ 6,14],[ 7,13],[],[],[],[],[],[],[],[]],
+                                              [[ 6,15],[ 7,14],[ 8,13],[],[],[],[],[],[],[]],
+                                              [[ 7,15],[ 8,14],[ 9,13],[],[],[],[],[],[]],
+                                              [[ 8,15],[ 9,14],[10,13],[],[],[],[],[]],
+                                              [[ 9,15],[10,14],[11,13],[],[],[],[]],
+                                              [[10,15],[11,14],[12,13],[],[],[]],
+                                              [[11,15],[12,14],[13,13],[],[]],
+                                              [[12,15],[13,14],[14,13],[]],
+                                              [[13,15],[14,14],[15,13]],
+                                              [[14,15],[15,14]],
+                                              [[15,15]]]} 
 """
+xMax = 4
+yMax = 4
+fade_pattern = []
 
+for x in range(xMax * 2 - 1):
+    plist = []
+    for y in range(yMax):
+        pairs = [y,x-y]
+        if pairs[0] >= 0 and pairs[0] < xMax and pairs[1] >= 0 and pairs[1] <yMax:
+            print(pairs,x,y)
+            plist.append(pairs)
+    print(plist)
+    fade_pattern.append(plist)
 
+print(fade_pattern)
 
-for x in range(len(text_image)):
-    image = textOverlay(text_image,[-x, 2], text_color = 1, bg_color = 0, transparent = True)
-    print("image",x)
-    for y in range(len(image)):
-        print(image[y])

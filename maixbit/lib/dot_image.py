@@ -105,3 +105,38 @@ class dot_image():
 
 
         }
+
+    def genImage(self, image_name, char = "mario"):
+
+        def func(val):
+            return val * (2**5)
+
+        print("image_name",image_name)
+        dotImage = self.mario[image_name]
+        new_list = []
+        for x in range(len(dotImage)):
+            new_list.append(list(map(func, dotImage[x])))
+        return new_list
+
+        # textの文字を空白列を追加して連結
+        for char in text:
+            print("char", char)
+            #print(self.dotsFont5pDict[ord(char)])
+            if font == "propotional":
+                for i in range(len(self.propotional[char])):
+                    dotImage.append(self.propotional[char][i])
+
+            elif font == "number3x5p":
+                for i in range(len(self.number3x5p[char])):
+                    dotImage.append(self.number3x5p[char][i])
+
+            elif font == "number4x5p":
+                for i in range(len(self.number4x5p[char])):
+                    dotImage.append(self.number4x5p[char][i])
+
+
+            dotImage.append(self.propotional[" "][0])
+
+
+        #print(dotImage)
+        return dotImage
