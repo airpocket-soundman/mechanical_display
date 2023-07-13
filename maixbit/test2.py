@@ -81,8 +81,9 @@ def run_life_game():
         print(total_life)
         if total_life == 0:
             board = initialize_board(life_num)
-        if generation%10 == 0:
+        if random.randint(1,100) <= 10:
             board[random.randint(0, 15)][random.randint(0, 15)] = 1
+            print("meteo!!")
         print(f"Generation {generation+1}:")
         print_board(board)
         time.sleep(0.2)
