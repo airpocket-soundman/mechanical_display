@@ -426,29 +426,6 @@ minute  = ds.datetime()[5]
 second  = ds.datetime()[6]
 print(year, month, day, hour, minute, second)
 
-
-def clock_display():
-
-    while True:
-        bg_image = display.bg_image_generate(50)
-
-  #      print(bg_image)
-        hour    = ds.datetime()[4]
-        minute  = ds.datetime()[5]
-        second  = ds.datetime()[6]
-        hour_image      = Font.genTextImage(text = '{:02}'.format(hour),font = "number3x5p")
-        colon_image     = Font.genTextImage(text = "  ", font = "propotional")
-        minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
-        sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
-
-        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
-
-        display.setImage(clock_image)
-        #time.sleep_ms(10)
-
 display.minPosition()
 time.sleep_ms(500)
 

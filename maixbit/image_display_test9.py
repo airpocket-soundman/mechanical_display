@@ -4,8 +4,6 @@ import pca9685
 import servo
 import font
 import ds3231
-import math.sqrt
-
 from Maix import GPIO
 #from fpioa_manager import fm, board_info
 #import lcd
