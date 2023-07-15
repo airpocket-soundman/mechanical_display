@@ -4,6 +4,7 @@ import pca9685
 import servo
 import font
 import ds3231
+import math.sqrt
 
 from Maix import GPIO
 #from fpioa_manager import fm, board_info
@@ -201,7 +202,11 @@ class mechanical_display:
 
     def setPixel(self, coordinate = None, value = None):
 
+        #フォーカス距離に合わせた角度調整
+        value = focus_correction(coordinate, value)
+
         #指定座標がレンジ外の場合の処理
+
         if coordinate != None:
             if int(coordinate[0]) > int(self.pixel_layout[0]):
                 print("x is out of range", x)
@@ -339,6 +344,19 @@ class mechanical_display:
                     image[x][y] = self.gray_scale_level - image[x][y] - 1
         return image
 
+    def focus_correction(coordinate, value):
+        r = 7.5             #len(servo_layout)-1
+        magnification = 32  #256scale / 8dot
+        x = coordinate[0]
+
+        if distance != 0:
+            if coordinate < r:
+                value = value - ((sqrt(r**2-((x-r)/distance)**2)-r)*magnitude)
+            else:
+                value = value + ((sqrt(r**2-((x-r)/distance)**2)-r)*magnitude)
+        return value
+
+
 
 #=======================================================================================================================
 
@@ -375,7 +393,8 @@ pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[
 gray_scale_bit_value = 8
 gray_scale_level = 2**gray_scale_bit_value
 
-
+#焦点距離の設定
+focus = 2 #0:フォーカスなし,2-10　2近距離、10遠距離
 
 #I2C　初期化
 i2c0 = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
@@ -388,6 +407,7 @@ print("address is :" + str(addr0))
 print("address is :" + str(addr1))
 #displayのインスタンス生成
 display = mechanical_display(i2c0, i2c1, unit_layout, servo_layout, gray_scale_bit_value)
+distance = 0    #フォーカス距離
 
 #5Pフォントのインスタンス生成
 Font = font.font_5P()
@@ -400,7 +420,7 @@ time.sleep_ms(300)
 
 #=====================================================================================================
 #RTCのインスタンスを生成
-ds = ds3231.DS3231(i2c1)
+ds = ds3231.DS3231(i2c0)
 
 """
 #RTCの時間設定

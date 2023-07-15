@@ -5,6 +5,7 @@ import servo
 import dot_image
 
 from Maix import GPIO
+from math import sqrt
 
 class mechanical_display:
     def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
@@ -16,6 +17,9 @@ class mechanical_display:
         self.gray_scale_bit_value = gray_scale_bit_value
         self.gray_scale_level = 2 ** gray_scale_bit_value
         self.pixel_layout = [self.unit_layout[0] * self.servo_layout[0], self.unit_layout[1] * self.servo_layout[1]]
+        self.magnification = 32 #フォーカス調整の強度 デフォルト：32
+        self.distance = 0       #フォーカス調整時の視点との距離、0:補正なし 2～10程度で適宜決定。2はディスプレイ幅の2倍（約1m）
+
 #UnitのI2C addressのリスト定義
         self.unit_address_list = [[64, 65, 66, 67],
                                   [68, 69, 70, 71],
@@ -193,9 +197,29 @@ class mechanical_display:
                 else:
                     time.sleep_us(10)
 
-# 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
+    #focus位置によるパネル角度の補正
+    def focus_correction(self, coordinate, value):
+        r = 7.5             #len(servo_layout)-1
 
+        x = coordinate[0]
+        #print(x,int((sqrt(r**2-((x-r)/distance)**2)-r)*magnification))
+
+        if self.distance != 0:
+            if coordinate[0] < r:
+                value = value + int((sqrt(r**2-((x-r)/self.distance)**2)-r)* self.magnification)
+            else:
+                value = value - int((sqrt(r**2-((x-r)/self.distance)**2)-r)* self.magnification)
+            if value > 255:
+                value = 255
+            elif value < 0:
+                value = 0
+        return value
+
+
+# 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
     def setPixel(self, coordinate = None, value = None):
+
+
 
         #指定座標がレンジ外の場合の処理
         if coordinate != None:
@@ -234,6 +258,9 @@ class mechanical_display:
 
 # ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
     def usValue(self, coordinate = [0, 0], gray_scale_color = 0):
+        #focus位置によってvalue値を補正する
+        if gray_scale_color != 256:
+            self.focus_correction(coordinate, gray_scale_color)
         x = coordinate[0]
         y = coordinate[1]
 #        print(x,y)
@@ -259,7 +286,7 @@ class mechanical_display:
 # 全てのパネルをセンター位置に移動する
     def flatPosition(self):
         print("flat position")
-        self.setPixel(value = gray_scale_level)
+        self.setPixel(value = self.gray_scale_level)
 
 # 全てのパネルを最大位置に移動する
     def maxPosition(self):
@@ -375,4 +402,5 @@ class mechanical_display:
                 fade_pattern.append(plist)
 
             return fade_pattern
+
 
