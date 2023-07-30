@@ -480,32 +480,7 @@ image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,0)
 display.setImage(shifted_image)
 time.sleep_ms(100)
-"""
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,3)
-display.setImage(shifted_image)
-time.sleep_ms(100)
 
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,5)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,6)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,5)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImage(image_name = "standing")
-shifted_image = display.shift_image(image,0,3)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-"""
 image = Image.genImage(image_name = "standing")
 shifted_image = display.shift_image(image,0,2)
 display.setImage(shifted_image)
