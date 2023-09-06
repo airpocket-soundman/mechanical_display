@@ -3,8 +3,12 @@ import time
 import pca9685
 import servo
 import font
-from Maix import GPIO
+#import ds3231
 
+from Maix import GPIO
+#from fpioa_manager import fm, board_info
+#import lcd
+#import sensor
 
 class mechanical_display:
     def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
@@ -190,6 +194,8 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
+                else:
+                    time.sleep_us(500)
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
 
@@ -290,20 +296,13 @@ class mechanical_display:
         return bg_image
 
 # bg_imageにtext_imageを合成する
-    def textOverlay(self,　bg_image, text_image ,offset = [0,0], text_color = None, transparent = True):
+    def textOverlay(self, bg_image = 5, text_image =2,offset = [0,0], text_color = None, transparent = True):
         if text_color == None:
             text_color = self.gray_scale_color -1
         text_size = [len(text_image), len(text_image[0])]
 
         image = bg_image
 
-        """
-        for x in range(self.pixel_layout[0]):
-            list = []
-            for y in range(self.pixel_layout[1]):
-                list.append(bg_color)
-            image.append(list)
-        """
         for y in range(text_size[1]):
             if y + offset[1] < self.pixel_layout[1] and y + offset[1] >= 0:
                 for x in range(text_size[0]):
@@ -311,10 +310,9 @@ class mechanical_display:
                         if transparent == False:
                             image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
                         else:
-                            print(x,y,text_image[x][y])
                             if text_image[x][y] == 1:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-        print(image)
+        #print(image)
         return image
 
 #コマ間を補完するメソッド
@@ -342,7 +340,33 @@ class mechanical_display:
         return image
 
 
+#=======================================================================================================================
 
+#ボタン設定
+#fm.register(board_info.BUTTON_A, fm.fpioa.GPIO1)
+#button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
+#fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
+#button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
+
+"""
+#LCD設定
+lcd.init(freq=15000000)
+lcd.direction(lcd.YX_LRDU)
+
+#カメラ設定
+sensor.reset()                      # Reset and initialize the sensor. It will
+                                    # run automatically, call sensor.run(0) to stop
+sensor.set_pixformat(sensor.GRAYSCALE) # Set pixel format to RGB565 (or GRAYSCALE)
+sensor.set_framesize(sensor.QQVGA)   # Set frame size to QVGA (320x240) QQVGA (160x120)
+sensor.skip_frames(time = 2000)     # Wait for settings take effect.
+sensor.set_contrast(+2)             # Contrast +2 to -2
+#sensor.set_brightness(-2)           # Brightness +2 to -2
+#sensor.set_saturation(-2)           # Saturation +2 to -2
+sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
+#sensor.set_vflip(1)                 # 1:enable 0:disable
+sensor.set_hmirror(1)                 # 1:enable 0:disable
+
+"""
 
 #displayのUnit配置数定義
 unit_layout  = [4, 4]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
@@ -354,8 +378,8 @@ gray_scale_level = 2**gray_scale_bit_value
 
 
 #I2C　初期化
-i2c0 = I2C(I2C.I2C0, freq=50000, scl=34, sda=35)
-i2c1 = I2C(I2C.I2C1, freq=50000, scl=32, sda=33)
+i2c0 = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
+i2c1 = I2C(I2C.I2C1, freq=100000, scl=32, sda=33)
 
 #I2C 接続されているユニットのアドレス確認
 addr0 = i2c0.scan()
@@ -374,22 +398,39 @@ time.sleep_ms(300)
 
 
 
+#=====================================================================================================
+#RTCのインスタンスを生成
+ds = ds3231.DS3231(i2c0)
 
-# テキスト表示テスト
+"""
+#RTCの時間設定
+year    = 2023 # Can be yyyy or yy format
+month   = 7
+mday    = 4
+hour    = 15 # 24 hour format only
+minute  = 28
+second  = 30 # Optional
+weekday = 2 # Optional
 
+datetime = (year, month, mday, hour, minute, second, weekday)
+ds.datetime(datetime)
+print(ds.datetime())
+"""
 
+#現在時刻をRTCから読み取って表示
+year    = ds.datetime()[0]
+month   = ds.datetime()[1]
+day     = ds.datetime()[2]
+hour    = ds.datetime()[4]
+minute  = ds.datetime()[5]
+second  = ds.datetime()[6]
+print(year, month, day, hour, minute, second)
 
-
-display.maxPosition()
-#time.sleep_ms(1000)
 display.minPosition()
-time.sleep_ms(1000)
-
-
-
+time.sleep_ms(500)
 
 #display.flatPosition()
-time.sleep_ms(1000)
-#sec_display()
+#time.sleep_ms(1000)
+#clock_display()
 
 display.release()
