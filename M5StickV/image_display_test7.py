@@ -25,13 +25,13 @@ class mechanical_display:
                                   [76, 77, 78, 79]]
 
 #UnitのIDのリスト定義
-        print("set unit_ID_list")
+#        print("set unit_ID_list")
         self.unit_ID_list = []
         n = 0
         for y in range(self.unit_layout[1]):
             list = []
             for x in range(self.unit_layout[0]):
-                print("x,y",x,y)
+#                print("x,y",x,y)
                 list.append(n)
                 n += 1
             self.unit_ID_list.append(list)
@@ -44,7 +44,7 @@ class mechanical_display:
             temp.append(list)
         self.unit_ID_list = temp
 
-        print("unit_ID_list:",self.unit_ID_list)
+#        print("unit_ID_list:",self.unit_ID_list)
 
 #Unit内のPixel位置とサーボIDの対応を定義
         self.unit_pixel_ID_list = [[ 0,  4,  8, 12],
@@ -53,7 +53,7 @@ class mechanical_display:
                                    [ 3,  7, 11, 15]]
 
 #unit_ID_listとunit_pixel_ID_listから、displayのPixelとunit_ID,各ユニットのPixelIDを対応させるpixel_ID_listを生成する
-        print("set pixel_ID_list")
+#        print("set pixel_ID_list")
         self.pixel_ID_list = []
 
         for x in range(self.unit_layout[0]):
@@ -161,7 +161,7 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        print("old_image")
+#        print("old_image")
         for x in range(self.pixel_layout[0]):
             list = []
             for y in range(self.pixel_layout[1]):
@@ -650,9 +650,10 @@ for y in range(pixel_layout[1]):
         display.setPixel([x, y])
 """
 #display.setPixel([15,3],0)
-
+"""
 display.minPosition()
 time.sleep_ms(1000)
 display.flatPosition()
 time.sleep_ms(1000)
-display.release()
+"""
+#display.release()

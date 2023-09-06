@@ -2,7 +2,7 @@ from machine import I2C
 import time
 import pca9685
 import servo
-import font
+#import font
 
 from Maix import GPIO
 from fpioa_manager import fm, board_info

@@ -2,13 +2,10 @@ from machine import I2C
 import time
 import pca9685
 import servo
-import font
-#import ds3231
+import dot_image
 
 from Maix import GPIO
-#from fpioa_manager import fm, board_info
-#import lcd
-#import sensor
+from math import sqrt
 
 class mechanical_display:
     def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
@@ -20,6 +17,9 @@ class mechanical_display:
         self.gray_scale_bit_value = gray_scale_bit_value
         self.gray_scale_level = 2 ** gray_scale_bit_value
         self.pixel_layout = [self.unit_layout[0] * self.servo_layout[0], self.unit_layout[1] * self.servo_layout[1]]
+        self.magnification = 32 #フォーカス調整の強度 デフォルト：32
+        self.distance = 0       #フォーカス調整時の視点との距離、0:補正なし 2～10程度で適宜決定。2はディスプレイ幅の2倍（約1m）
+
 #UnitのI2C addressのリスト定義
         self.unit_address_list = [[64, 65, 66, 67],
                                   [68, 69, 70, 71],
@@ -29,8 +29,8 @@ class mechanical_display:
 #UnitのI2C BUSのリスト定義
         self.unit_I2C_BUS_list = [[i2c0, i2c0, i2c0, i2c0],
                                   [i2c0, i2c0, i2c0, i2c0],
-                                  [i2c1, i2c1, i2c1, i2c1],
-                                  [i2c1, i2c1, i2c1, i2c1]]
+                                  [i2c0, i2c0, i2c0, i2c0],
+                                  [i2c0, i2c0, i2c0, i2c0]]
 
 
 #UnitのIDのリスト定義
@@ -170,7 +170,7 @@ class mechanical_display:
 
 # 初期配置としてflat状態を表示
         self.old_image = []
-        print("old_image")
+        #print("old_image")
         for x in range(self.pixel_layout[0]):
             list = []
             for y in range(self.pixel_layout[1]):
@@ -195,11 +195,31 @@ class mechanical_display:
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
                 else:
-                    time.sleep_us(500)
+                    time.sleep_us(10)
+
+    #focus位置によるパネル角度の補正
+    def focus_correction(self, coordinate, value):
+        r = 7.5             #len(servo_layout)-1
+
+        x = coordinate[0]
+        #print(x,int((sqrt(r**2-((x-r)/distance)**2)-r)*magnification))
+
+        if self.distance != 0:
+            if coordinate[0] < r:
+                value = value + int((sqrt(r**2-((x-r)/self.distance)**2)-r)* self.magnification)
+            else:
+                value = value - int((sqrt(r**2-((x-r)/self.distance)**2)-r)* self.magnification)
+            if value > 255:
+                value = 255
+            elif value < 0:
+                value = 0
+        return value
+
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
-
     def setPixel(self, coordinate = None, value = None):
+
+
 
         #指定座標がレンジ外の場合の処理
         if coordinate != None:
@@ -238,6 +258,9 @@ class mechanical_display:
 
 # ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
     def usValue(self, coordinate = [0, 0], gray_scale_color = 0):
+        #focus位置によってvalue値を補正する
+        if gray_scale_color != 256:
+            self.focus_correction(coordinate, gray_scale_color)
         x = coordinate[0]
         y = coordinate[1]
 #        print(x,y)
@@ -263,7 +286,7 @@ class mechanical_display:
 # 全てのパネルをセンター位置に移動する
     def flatPosition(self):
         print("flat position")
-        self.setPixel(value = gray_scale_level)
+        self.setPixel(value = self.gray_scale_level)
 
 # 全てのパネルを最大位置に移動する
     def maxPosition(self):
@@ -315,6 +338,29 @@ class mechanical_display:
         #print(image)
         return image
 
+#イメージを上下左右にシフトする
+    def shift_image(self, image, shift_x, shift_y):
+        size_x = len(image)
+        size_y = len(image[0])
+
+        # シフト後の行列を作成し、0で初期化する
+        shifted_image = [[0] * size_x for _ in range(size_y)]
+        for x in range(size_x):
+            for y in range(size_y):
+                # シフト後のインデックスを計算する
+                shifted_x = (x + shift_x)
+                shifted_y = (y + shift_y)
+                if shifted_x < 0:
+                    shifted_x = size_x
+                if shifted_y < 0:
+                    shifted_y = size_y
+                try:
+                    shifted_image[x][y] = image[shifted_x][shifted_y]
+                except:
+                    pass
+
+        return shifted_image
+
 #コマ間を補完するメソッド
     def interpolation(self, start_image, finish_image, frame_number):
         if len(start_image) != len(finish_image) or len(start_image[0]) != len(finish_image[0]):
@@ -339,98 +385,22 @@ class mechanical_display:
                     image[x][y] = self.gray_scale_level - image[x][y] - 1
         return image
 
+    def gen_fade_pattern(self, type = "UpLeft to DownRight"):
+        if type == "UpLeft to DownRight":
+            xMax = self.pixel_layout[0]
+            yMax = self.pixel_layout[1]
+            fade_pattern = []
 
-#=======================================================================================================================
+            for x in range(xMax * 2 - 1):
+                plist = []
+                for y in range(yMax):
+                    pairs = [y,x-y]
+                    if pairs[0] >= 0 and pairs[0] < xMax and pairs[1] >= 0 and pairs[1] <yMax:
+                        print(pairs,x,y)
+                        plist.append(pairs)
+                print(plist)
+                fade_pattern.append(plist)
 
-#ボタン設定
-#fm.register(board_info.BUTTON_A, fm.fpioa.GPIO1)
-#button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
-#fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
-#button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
-
-"""
-#LCD設定
-lcd.init(freq=15000000)
-lcd.direction(lcd.YX_LRDU)
-
-#カメラ設定
-sensor.reset()                      # Reset and initialize the sensor. It will
-                                    # run automatically, call sensor.run(0) to stop
-sensor.set_pixformat(sensor.GRAYSCALE) # Set pixel format to RGB565 (or GRAYSCALE)
-sensor.set_framesize(sensor.QQVGA)   # Set frame size to QVGA (320x240) QQVGA (160x120)
-sensor.skip_frames(time = 2000)     # Wait for settings take effect.
-sensor.set_contrast(+2)             # Contrast +2 to -2
-#sensor.set_brightness(-2)           # Brightness +2 to -2
-#sensor.set_saturation(-2)           # Saturation +2 to -2
-sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
-#sensor.set_vflip(1)                 # 1:enable 0:disable
-sensor.set_hmirror(1)                 # 1:enable 0:disable
-
-"""
-
-#displayのUnit配置数定義
-unit_layout  = [4, 4]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
-servo_layout = [4, 4]
-pixel_layout = [unit_layout[0] * servo_layout[0], unit_layout[1] * servo_layout[1]]
-gray_scale_bit_value = 8
-gray_scale_level = 2**gray_scale_bit_value
+            return fade_pattern
 
 
-
-#I2C　初期化
-i2c0 = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
-i2c1 = I2C(I2C.I2C1, freq=100000, scl=32, sda=33)
-
-#I2C 接続されているユニットのアドレス確認
-addr0 = i2c0.scan()
-addr1 = i2c1.scan()
-print("address is :" + str(addr0))
-print("address is :" + str(addr1))
-#displayのインスタンス生成
-display = mechanical_display(i2c0, i2c1, unit_layout, servo_layout, gray_scale_bit_value)
-
-#5Pフォントのインスタンス生成
-Font = font.font_5P()
-
-#flatポジションを表示する。
-display.flatPosition()
-time.sleep_ms(300)
-
-
-
-#=====================================================================================================
-#RTCのインスタンスを生成
-ds = ds3231.DS3231(i2c0)
-
-"""
-#RTCの時間設定
-year    = 2023 # Can be yyyy or yy format
-month   = 7
-mday    = 4
-hour    = 15 # 24 hour format only
-minute  = 28
-second  = 30 # Optional
-weekday = 2 # Optional
-
-datetime = (year, month, mday, hour, minute, second, weekday)
-ds.datetime(datetime)
-print(ds.datetime())
-"""
-
-#現在時刻をRTCから読み取って表示
-year    = ds.datetime()[0]
-month   = ds.datetime()[1]
-day     = ds.datetime()[2]
-hour    = ds.datetime()[4]
-minute  = ds.datetime()[5]
-second  = ds.datetime()[6]
-print(year, month, day, hour, minute, second)
-
-display.minPosition()
-time.sleep_ms(500)
-
-#display.flatPosition()
-#time.sleep_ms(1000)
-#clock_display()
-
-display.release()
