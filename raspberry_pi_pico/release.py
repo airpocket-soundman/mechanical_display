@@ -562,30 +562,6 @@ def wave_tan(wave = 162):
 #=====================================================================================================
 
 
-while True:
 
-    print("snacks")
-#    snacks_text(base_color = 50, text_color = 200)
-    time.sleep_ms(2000)
-    print("mario")
-    mario_anime()
-    time.sleep_ms(5000)
-    print("life game")
- #   run_life_game(gen = 500)
-    print("wave_tan")
-    wave_tan(wave = 162)
-
-    fade_pattern = display.gen_fade_pattern(type = "UpLeft to DownRight")
-    for i in range(len(fade_pattern)):
-        for j in range(len(fade_pattern[i])):
-            display.setPixel(coordinate = fade_pattern[i][j], value = gray_scale_level)
-        time.sleep_ms(100)
-    time.sleep_ms(5000)
-
-
-#display.maxPosition()
-#time.sleep_ms(5000)
-#display.flatPosition()
-time.sleep_ms(1000)
 
 display.release()
