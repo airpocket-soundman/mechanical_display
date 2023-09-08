@@ -8,7 +8,7 @@ from Maix import GPIO
 from math import sqrt
 
 class mechanical_display:
-    def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
+    def __init__(self, i2c0, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
 
         #self.i2c0 = i2c0
 
@@ -219,8 +219,6 @@ class mechanical_display:
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
     def setPixel(self, coordinate = None, value = None):
 
-
-
         #指定座標がレンジ外の場合の処理
         if coordinate != None:
             if int(coordinate[0]) > int(self.pixel_layout[0]):
@@ -255,6 +253,7 @@ class mechanical_display:
                     usValue = self.usValue([x, y], value)
                     self.pca[self.pixel_ID_list[x][y][0]].position(self.pixel_ID_list[x][y][1], us=usValue)
                     self.old_image[x][y] = value
+                    time.sleep_us(10)
 
 # ピクセル座標と色調（bit数）と値から、サーボのusの値を計算して返す
     def usValue(self, coordinate = [0, 0], gray_scale_color = 0):

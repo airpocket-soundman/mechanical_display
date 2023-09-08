@@ -10,7 +10,7 @@ import ds3231
 from Maix import GPIO
 
 class mechanical_display:
-    def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
+    def __init__(self, i2c0, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
 
         #self.i2c0 = i2c0
 
@@ -28,8 +28,8 @@ class mechanical_display:
 #UnitのI2C BUSのリスト定義
         self.unit_I2C_BUS_list = [[i2c0, i2c0, i2c0, i2c0],
                                   [i2c0, i2c0, i2c0, i2c0],
-                                  [i2c1, i2c1, i2c1, i2c1],
-                                  [i2c1, i2c1, i2c1, i2c1]]
+                                  [i2c0, i2c0, i2c0, i2c0],
+                                  [i2c0, i2c0, i2c0, i2c0]]
 
 
 #UnitのIDのリスト定義
@@ -390,23 +390,20 @@ gray_scale_bit_value = 8
 gray_scale_level = 2**gray_scale_bit_value
 
 #I2C　初期化
-i2c0 = I2C(I2C.I2C0, freq=100000, scl=34, sda=35)
-i2c1 = I2C(I2C.I2C1, freq=100000, scl=32, sda=33)
+i2c0 = I2C(I2C.I2C0, freq=50000, scl=34, sda=35)
 
 #I2C 接続されているユニットのアドレス確認
 addr0 = i2c0.scan()
-addr1 = i2c1.scan()
 print("address is :" + str(addr0))
-print("address is :" + str(addr1))
 #displayのインスタンス生成
-display = mechanical_display(i2c0, i2c1, unit_layout, servo_layout, gray_scale_bit_value)
+display = mechanical_display(i2c0, unit_layout, servo_layout, gray_scale_bit_value)
 
 #5Pフォントのインスタンス生成
 #Font = font.font_5P()
 
 #flatポジションを表示する。
 display.flatPosition()
-time.sleep_ms(300)
+time.sleep_ms(1000)
 
 # テキスト表示テスト
 
@@ -441,13 +438,13 @@ for x in range(len(text_image)):
 
 #standingを表示
 Image = dot_image.dot_image()
-display.minPosition()
+#display.maxPosition()
 time.sleep_ms(1000)
 image = Image.genImage(image_name = "standing")
 #display.setImage(image)
 time.sleep_ms(3000)
 
-display.minPosition()
+#display.minPosition()
 
 
 # marioが上から落ちてくる

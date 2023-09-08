@@ -10,7 +10,7 @@ import ds3231
 from Maix import GPIO
 
 class mechanical_display:
-    def __init__(self, i2c0, i2c1, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
+    def __init__(self, i2c0, unit_layout = [1, 1],servo_layout = [4, 4], gray_scale_bit_value = 4):
 
         #self.i2c0 = i2c0
 
@@ -28,8 +28,8 @@ class mechanical_display:
 #UnitのI2C BUSのリスト定義
         self.unit_I2C_BUS_list = [[i2c0, i2c0, i2c0, i2c0],
                                   [i2c0, i2c0, i2c0, i2c0],
-                                  [i2c1, i2c1, i2c1, i2c1],
-                                  [i2c1, i2c1, i2c1, i2c1]]
+                                  [i2c0, i2c0, i2c0, i2c0],
+                                  [i2c0, i2c0, i2c0, i2c0]]
 
 
 #UnitのIDのリスト定義
@@ -390,8 +390,8 @@ gray_scale_bit_value = 8
 gray_scale_level = 2**gray_scale_bit_value
 
 #I2C　初期化
-i2c0 = I2C(I2C.I2C0, freq=50000, scl=34, sda=35)
-i2c1 = I2C(I2C.I2C1, freq=50000, scl=32, sda=33)
+i2c0 = I2C(I2C.I2C0, freq=400000, scl=34, sda=35)
+i2c1 = I2C(I2C.I2C1, freq=100000, scl=32, sda=33)
 
 #I2C 接続されているユニットのアドレス確認
 addr0 = i2c0.scan()
@@ -406,233 +406,12 @@ display = mechanical_display(i2c0, i2c1, unit_layout, servo_layout, gray_scale_b
 
 #flatポジションを表示する。
 display.flatPosition()
+#display.maxPosition()
 time.sleep_ms(300)
 
-# テキスト表示テスト
+for j in range(16):
+    for i in range(16):
+        display.setPixel(coordinate = [i,j], value = 255)
+        time.sleep_us(1000)
 
-"""
-# テキストイメージ表示
-text_image = Font.genTextImage(text = "A",font = "propotional")
-bg_image = display.bg_image_generate(200)
-image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
-display.setImage(image)
-time.sleep_ms(2000)
-"""
-
-"""
-# テキストイメージスクロール表示
-#time.sleep_ms(5000)
-text_image = Font.genTextImage(text = "        hello world",font = "propotional")
-#text_image = Font.genTextImage(text = "ABC",font = "propotional")
-print(text_image)
-for x in range(len(text_image)):
-
-    bg_image = display.bg_image_generate(50)
-    print(x,bg_image)
-    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = 200, transparent = True)
-#    print(image)
-#    for i in range(len(image)):
-#        print(image[i])
-    display.setImage(image)
-    time.sleep_ms(10)
-"""
-
-
-# m5 anime
-
-
-
-
-
-# mario anime
-
-#Imageインスタンス
-Image = dot_image.dot_image()
-#displayを最小値に
-display.minPosition()
-time.sleep_ms(1000)
-
-
-
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-15)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-14)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-13)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-12)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-11)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-10)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-9)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-8)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-7)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-6)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-5)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-4)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-3)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-2)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-shifted_image = display.shift_image(image,0,-1)
-display.setImage(shifted_image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s1")
-display.setImage(image)
-time.sleep_ms(2000)
-
-image = Image.genImageM5(image_name = "s2")
-display.setImage(image)
-time.sleep_ms(200)
-
-image = Image.genImageM5(image_name = "s3")
-display.setImage(image)
-time.sleep_ms(200)
-
-image = Image.genImageM5(image_name = "s4")
-display.setImage(image)
-time.sleep_ms(200)
-
-image = Image.genImageM5(image_name = "s5")
-display.setImage(image)
-time.sleep_ms(500)
-
-image = Image.genImageM5(image_name = "s6")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s7")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s8")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s9")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s10")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s11")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s12")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s13")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s14")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s15")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s16")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s17")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s18")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s19")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s20")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s21")
-display.setImage(image)
-time.sleep_ms(100)
-
-image = Image.genImageM5(image_name = "s22")
-display.setImage(image)
-time.sleep_ms(100)
-
-
-
-#for y in range(pixel_layout[1]):
-#    for x in range(pixel_layout[0]):
-#        display.setPixel([x, y],gray_scale_level)
-#    time.sleep_ms(100)
-
-fade_pattern = display.gen_fade_pattern(type = "UpLeft to DownRight")
-
-for i in range(len(fade_pattern)):
-    for j in range(len(fade_pattern[i])):
-        display.setPixel(coordinate = fade_pattern[i][j], value = gray_scale_level)
-    time.sleep_ms(100)
-
-
-#display.flatPosition()
-time.sleep_ms(1000)
 display.release()
