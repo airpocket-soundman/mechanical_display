@@ -6,11 +6,12 @@ import time
 uart = UART(0, 115200)
 
 print("Start!")
-for i in range(1000):
-    buf = uart.read(1)
-    print(buf)
+while True:
+    while uart.any():
+        buf = uart.read(1)
+        print(buf)
     
     time.sleep_ms(100)
     
-uart.write("All Done\r")
+
 print("ALL DONE")

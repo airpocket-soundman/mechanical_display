@@ -27,11 +27,11 @@ class mechanical_display:
                                   [76, 77, 78, 79]]
 
 #UnitのI2C BUSのリスト定義
-        self.unit_I2C_BUS_list = [[i2c0, i2c0, i2c0, i2c0],
-                                  [i2c0, i2c0, i2c0, i2c0],
-                                  [i2c1, i2c1, i2c1, i2c1],
-                                  [i2c1, i2c1, i2c1, i2c1]]
 
+        self.unit_I2C_BUS_list = [[i2c0, i2c0, i2c0, i2c0],
+                                  [i2c1, i2c1, i2c1, i2c1],
+                                  [i2c1, i2c1, i2c1, i2c1],
+                                  [i2c0, i2c0, i2c0, i2c0]]
 
 #UnitのIDのリスト定義
         print("set unit_ID_list")
@@ -396,9 +396,9 @@ class mechanical_display:
                 for y in range(yMax):
                     pairs = [y,x-y]
                     if pairs[0] >= 0 and pairs[0] < xMax and pairs[1] >= 0 and pairs[1] <yMax:
-                        print(pairs,x,y)
+                        #print(pairs,x,y)
                         plist.append(pairs)
-                print(plist)
+                #print(plist)
                 fade_pattern.append(plist)
 
             return fade_pattern

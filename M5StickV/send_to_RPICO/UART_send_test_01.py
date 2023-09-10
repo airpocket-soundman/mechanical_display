@@ -13,19 +13,19 @@ y = len(list2[0])
 print("x",x)
 print("y",y)
 
-for i in range(10):
-
     # データ開始の識別用パケット
-    start_packet = b'START'
+start_packet = b'START'
 
     # データ開始パケットを送信
-    uart.write(start_packet)
+uart.write(start_packet)
+uart.write(b'\x00')
+uart.write(bytes([100]))
 
     # リストの要素数を送信
-    uart.write(bytes([x]))
-    uart.write(bytes([y]))
+#    uart.write(bytes([x]))
+#    uart.write(bytes([y]))
 
     # データを送信
-    for i in range(x):
-        for j in range(y):
-            uart.write(bytes([list2[i][j]]))
+#    for i in range(x):
+#        for j in range(y):
+#            uart.write(bytes([list2[i][j]]))

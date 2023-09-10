@@ -21,8 +21,8 @@ gray_scale_bit_value = 8
 gray_scale_level = 2**gray_scale_bit_value
 
 #I2C　初期化
-i2c0 = I2C(0, freq = 400000, scl=Pin(5), sda=Pin(4))
-i2c1 = I2C(1, freq = 400000, scl=Pin(3), sda=Pin(2))
+i2c0 = I2C(0, freq = 1000000, scl=Pin(5), sda=Pin(4))
+i2c1 = I2C(1, freq = 1000000, scl=Pin(3), sda=Pin(2))
 
 #I2C 接続されているユニットのアドレス確認
 addr0 = i2c0.scan()
@@ -556,7 +556,7 @@ def wave_tan(wave = 162):
                 display.setPixel(coordinate = [x,y], value = (((t + x) % 16)-8) * int(mag) + 125)
         if mag == 16:
             step = -1
-        elif mag ==0:
+        elif mag == 2:
             step = 1
         mag += step
 #=====================================================================================================
@@ -566,11 +566,11 @@ while True:
 
     print("snacks")
 #    snacks_text(base_color = 50, text_color = 200)
-    time.sleep_ms(2000)
-    print("mario")
-    mario_anime()
-    time.sleep_ms(5000)
-    print("life game")
+    #time.sleep_ms(2000)
+    #print("mario")
+    #mario_anime()
+    #time.sleep_ms(5000)
+    #print("life game")
  #   run_life_game(gen = 500)
     print("wave_tan")
     wave_tan(wave = 162)
