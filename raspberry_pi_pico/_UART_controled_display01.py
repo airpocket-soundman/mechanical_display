@@ -93,10 +93,10 @@ def clock_display(loop_num = 1000):
         minute_image    = Font.genTextImage(text = '{:02}'.format(minute),font = "number3x5p")
         sec_image       = Font.genTextImage(text = '{:02}'.format(second),font = "number3x5p")
 
-        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 200, transparent = True)
-        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 200, transparent = True)
+        clock_image = display.textOverlay(bg_image,    hour_image,   offset = [0,2], text_color = 250, transparent = True)
+        clock_image = display.textOverlay(clock_image, colon_image,  offset = [6,2], text_color = 250, transparent = True)
+        clock_image = display.textOverlay(clock_image, minute_image, offset = [9,2], text_color = 250, transparent = True)
+        clock_image = display.textOverlay(clock_image, sec_image,    offset = [9,9], text_color = 250, transparent = True)
 
         display.setImage(clock_image)
         #time.sleep_ms(10)
@@ -146,29 +146,6 @@ def gray_scale_demo():
         for y in range(16):
             display.setPixel([x, y],color)
             color -= 1
-def snacks_text(base_color = 50, text_color = 200):
-    print("snacks")
-    text_image = Font.genTextImage(text = "        2023.7.17  SNACKS Vol.5 (>_0)",font = "propotional")
-    bg_image = display.bg_image_generate(base_color)
-    for x in range(len(text_image)):
-        bg_image = display.bg_image_generate(base_color)
-        image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
-        display.setImage(image)
-        time.sleep_ms(50)
-
-    time.sleep_ms(100)
-
-    text_image = Font.genTextImage(text = "        MECHANICAL DISPLAY  8BIT GRAY SCALE VERSION.",font = "propotional")
-    bg_image = display.bg_image_generate(base_color)
-    for x in range(len(text_image)):
-        bg_image = display.bg_image_generate(base_color)
-        image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
-        display.setImage(image)
-        time.sleep_ms(50)
-
-    time.sleep_ms(1000)
-    gray_scale_demo()
-
 
 def mario_anime():
     Image = dot_image.dot_image()
@@ -563,8 +540,6 @@ def m5stack_anime():
     display.minPosition()
     time.sleep_ms(1000)
 
-
-    
     image = Image.genImageM5(image_name = "s1")
     shifted_image = display.shift_image(image,0,-15)
     display.setImage(shifted_image)
@@ -646,23 +621,23 @@ def m5stack_anime():
 
     image = Image.genImageM5(image_name = "s2")
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
     image = Image.genImageM5(image_name = "s3")
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
     image = Image.genImageM5(image_name = "s4")
     display.setImage(image)
-    time.sleep_ms(200)
+    time.sleep_ms(100)
 
     image = Image.genImageM5(image_name = "s5")
     display.setImage(image)
-    time.sleep_ms(500)
+    time.sleep_ms(100)
 
     image = Image.genImageM5(image_name = "s6")
     display.setImage(image)
-    time.sleep_ms(100)
+    time.sleep_ms(600)
 
     image = Image.genImageM5(image_name = "s7")
     display.setImage(image)
@@ -723,77 +698,87 @@ def m5stack_anime():
     image = Image.genImageM5(image_name = "s21")
     display.setImage(image)
     time.sleep_ms(100)
-
-    image = Image.genImageM5(image_name = "s22")
-    display.setImage(image)
-    time.sleep_ms(1000)
-
-    image = Image.genImageM5(image_name = "s22")
-    shifted_image = display.shift_image(image,1,0)
-    display.setImage(shifted_image)
-    time.sleep_ms(50)
     
     image = Image.genImageM5(image_name = "s22")
+    display.setImage(image)
+    time.sleep_ms(100)
+
+    image = Image.genImageM5(image_name = "s23")
+    display.setImage(image)
+    time.sleep_ms(100)
+    
+    image = Image.genImageM5(image_name = "s24")
+    display.setImage(image)
+    time.sleep_ms(2000)
+
+    image = Image.genImageM5(image_name = "s24")
+    shifted_image = display.shift_image(image,1,0)
+    display.setImage(shifted_image)
+    time.sleep_ms(10)
+    
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,2,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
+    time.sleep_ms(10)
 
-    image = Image.genImageM5(image_name = "s22")
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,3,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,4,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,5,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,6,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,7,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,8,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,9,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,10,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,11,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,12,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,13,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,14,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,15,0)
     display.setImage(shifted_image)
-    time.sleep_ms(50)
-    image = Image.genImageM5(image_name = "s22")
+    time.sleep_ms(10)
+    image = Image.genImageM5(image_name = "s24")
     shifted_image = display.shift_image(image,16,0)
     display.setImage(shifted_image)
 
+
+    
     base_color = 10
     text_color = 245
     text_image = Font.genTextImage(text = "        M5STACK CREATIVITY CONTEST 2023",font = "propotional")
@@ -803,8 +788,8 @@ def m5stack_anime():
         image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
     #    print("image", x)
         display.setImage(image)
-        time.sleep_ms(100)
-
+        time.sleep_ms(50)
+    
     display.release()
 
 def mouser_log():
@@ -1088,6 +1073,16 @@ while True:
         if received_message == 8:
             finish_auto = 0
             auto()
+            
+        if received_message == 9:
+            display.maxPosition()
+            time.sleep_ms(100)
+            display.release()
+            
+        if received_message == 10:
+            display.minPosition()
+            time.sleep_ms(100)
+            display.release()        
 #display.maxPosition()
 #time.sleep_ms(5000)
 #display.flatPosition()
