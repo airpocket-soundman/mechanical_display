@@ -1046,55 +1046,59 @@ def auto():
             break
 
 def color_test():
-    display.minPosition()
-
-    red1    =  50
-    magenda =  75
-    blue    = 100
+    """
+    red1    =   0
+    yellow =  40
+    green    = 100
     cian    = 125
-    green   = 150
-    yellow  = 175
-    red2    = 200
+    blue   = 150
+    magenda  = 215
+    red2    = 255
 
-    RGB_list = [red1, magenda, blue, cian, green, yellow, red2]
+    RGB_list = [red2, magenda, blue, cian, green, yellow, red1]
 
-    for i in range(3): #パターンの繰り返し回数
+    for i in range(1): #パターンの繰り返し回数
         for color in RGB_list:
             for y in range(4):
                 for x in range(8):
                     display.setPixel(coordinate = [x, y], value = color)
-                    time.sleep_ms(1000)
-
-
-    for i in range(32): #16の倍数をセット、16一回につき1ウェーブ
+            time.sleep_ms(500)
+    """
+    print("roop")
+    for i in range(1024): #16の倍数をセット、16一回につき1ウェーブ
         color_list = []
         for j in range(16):
-            k = i - j
+            k = i - j*4
             if k < 0:
                 k = 0
-            color_list.append((k%16)*15)
-
+            color_list.append((k%128)*2)
+        
+        color_num = 0
+        print(color_list)
+        for y in range(4):
+            for x in range(4):
+                
+                display.setPixel(coordinate = [x,     y], value = color_list[color_num])
+                display.setPixel(coordinate = [x + 4, y], value = color_list[color_num])
+                color_num += 1
+        print(color_list)
+        time.sleep_ms(10)
+    
+    print("finish roop")
+    for i in range(64): #16枚のパネルがすべてcolor=15に貼りつくまでの処理
+        for j in range(16):
+            color_list[j] += 2
+            if color_list[j] > 254:
+                color_list[j] = 254
+        print(color_list)
         color_num = 0
         for y in range(4):
             for x in range(4):
-                display.setPixel(coordinate = [x,     y], value = color[color_num])
-                display.setPixel(coordinate = [x + 4, y], value = color[color_num])
+                
+                display.setPixel(coordinate = [x,     y], value = color_list[color_num])
+                display.setPixel(coordinate = [x + 4, y], value = color_list[color_num])
+                color_num +=1
         time.sleep_ms(10)
-    
-    for i in range(15): #16枚のパネルがすべてcolor=15に貼りつくまでの処理
-        for j in range(16):
-            color_list[j] += 1
-            if color_list[j] > 15:
-                color_list[j] = 15
-    
-        for y in range(4):
-            for x in range(4):
-                display.setPixel(coordinate = [x,     y], value = color[color_num])
-                display.setPixel(coordinate = [x + 4, y], value = color[color_num])
-        time.sleep_ms(10)
-    time.sleep_ms(3000)
-
-
 
 while True:
     
@@ -1126,13 +1130,15 @@ while True:
             auto()
             
         if received_message == 9:
+            time.sleep_ms(5000)
             display.maxPosition()
+            color_test()
             time.sleep_ms(100)
             display.release()
             
         if received_message == 10:
             display.minPosition()
-            color_test()
+
             time.sleep_ms(100)
             display.release()        
 #display.maxPosition()
