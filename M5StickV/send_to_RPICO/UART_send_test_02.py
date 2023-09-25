@@ -42,7 +42,7 @@ but_b_pressed = 0
 
 #MENU画面設定
 menu = 0
-menu_list = [" 0. FLAT", " 1. CAMERA", " 2. CLOCK", " 3. LIFE GAME", " 4. M5STACK", " 5. MARIO", " 6. MOUSER", " 7. WAVE", " 8. AUTO", " 9. MAX","10. MIN"," 0. FLAT"," 1. CAMERA", " 2. CLOCK", " 3. LIFE GAME"]
+menu_list = [" 0. FLAT", " 1. CAMERA", " 2. CLOCK", " 3. LIFE GAME", " 4. M5STACK", " 5. MARIO", " 6. MOUSER", " 7. WAVE", " 8. AUTO", " 9. MAX","10. MIN","11. COLOR PANEL"," 0. FLAT"," 1. CAMERA", " 2. CLOCK", " 3. LIFE GAME"]
 
 # データ開始の識別用パケット
 start_packet = b'START'
@@ -107,7 +107,7 @@ def enter():
 def display_menu():
     global menu,menu_list
     lcd.clear((0,0,0))
-    lcd.draw_string(20,20, "=== MENU (0 to 8)===", lcd.GREEN, lcd.BLACK)
+    lcd.draw_string(20,20, "=== MENU (0 to 11)===", lcd.GREEN, lcd.BLACK)
     lcd.draw_string(20,40, ">", lcd.WHITE, lcd.BLACK)
     lcd.draw_string(30,40, menu_list[menu], lcd.BLACK, lcd.WHITE)
     lcd.draw_string(30,60, menu_list[menu+1], lcd.WHITE, lcd.BLACK)
@@ -120,7 +120,7 @@ while True:
     if but_b.value() == 0 and but_b_pressed == 0:
         #print("B_push")
         menu += 1
-        if menu > 10:
+        if menu > 11:
             menu = 0
         print("change to ",menu)
         display_menu()

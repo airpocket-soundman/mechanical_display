@@ -793,9 +793,60 @@ def m5stack_anime():
     display.release()
 
 def mouser_log():
+    # for mouser
+    print("mouser")
+
+    color_palette = [10,100,125,150,245]
+
+    mouser_logo_1 =     [[0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0],
+                         [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],
+                         [4,4,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [4,4,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [4,4,0,0,0,0,0,4,4,4,4,4,4,4,4,4],
+                         [4,4,4,4,4,0,0,0,0,0,4,4,4,4,4,4],
+                         [4,4,4,4,4,4,4,0,0,0,0,0,4,4,4,4],
+                         [4,4,4,4,4,4,4,4,4,4,0,0,0,0,4,4],
+                         [4,4,4,4,4,4,4,4,4,4,0,0,0,0,4,4],
+                         [4,4,4,4,4,4,4,0,0,0,0,0,4,4,4,4],
+                         [4,4,4,4,4,0,0,0,0,0,4,4,4,4,4,4],
+                         [4,4,0,0,0,0,0,4,4,4,4,4,4,4,4,4],
+                         [4,4,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [4,4,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4],
+                         [0,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0]]
+    
+    mouser_logo_2 =     [[0,1,1,1,1,1,1,1,4,4,4,4,4,4,4,0],
+                         [1,1,1,1,1,1,1,1,1,4,4,4,4,4,4,4],
+                         [1,1,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [1,1,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [1,1,0,0,0,0,0,1,1,4,4,4,4,4,4,4],
+                         [1,1,1,1,1,0,0,0,0,0,4,4,4,4,4,4],
+                         [1,1,1,1,1,1,1,0,0,0,0,0,4,4,4,4],
+                         [1,1,1,1,1,1,1,1,2,4,0,0,0,0,4,4],
+                         [1,1,1,1,1,1,1,2,2,4,0,0,0,0,4,4],
+                         [1,1,1,1,1,1,2,0,0,0,0,0,4,4,4,4],
+                         [1,1,1,1,2,0,0,0,0,0,4,4,4,4,4,4],
+                         [2,2,0,0,0,0,0,2,4,4,4,4,4,4,4,4],
+                         [2,2,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [2,2,0,0,0,0,0,0,0,0,0,0,0,0,4,4],
+                         [3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4],
+                         [0,3,3,4,4,4,4,4,4,4,4,4,4,4,4,0]]
+    
+    image = mouser_logo_2
+
+    for x in range(16):
+        for y in range(16):
+            image[x,y] = color_palette[image[x,y]]
+
+    for x in range(33):
+        shifted_image = display.shift_image(image,x - 17,0)
+        display.setImage(shifted_image)
+        if x == 17:
+            time.sleep_ms(5000)
+
     base_color = 10
     text_color = 245
-
+    """
     ss = 0
     ds = 1
 
@@ -832,9 +883,6 @@ def mouser_log():
                         [ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds],
                         [ss,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ss]]
 
-
-    # for mouser
-    print("mouser")
     stop_counter = 17
     counter = 0
     bg_image = display.bg_image_generate(base_color)
@@ -847,6 +895,7 @@ def mouser_log():
         counter += 1
 
     time.sleep_ms(1000)
+    """
 
     text_image = Font.genTextImage(text = "        MOUSER MAKE AWARDS 2023",font = "propotional")
     bg_image = display.bg_image_generate(base_color)
@@ -995,9 +1044,10 @@ def uart_read_img_list2():
 
                 
 
-def camera():
+def camera(frame = 300):
     global finish_auto
-    while True:
+    for i in range(frame):
+#    while True:
         if uart.any():
             received_message = uart_read_int()
             print("mes=",received_message)
@@ -1010,16 +1060,12 @@ def camera():
                 print("else")
                 finish_auto = 1
                 break
+
 finish_auto = 0
 def auto():
     global finish_auto
     while True:
-        clock_display(loop_num = 1500)
-        if finish_auto == 1:
-            finish_auto = 0
-            display.flatPosition()
-            break
-        run_life_game(gen = 100)
+        mouser_log()
         if finish_auto == 1:
             finish_auto = 0
             display.flatPosition()
@@ -1034,12 +1080,22 @@ def auto():
             finish_auto = 0
             display.flatPosition()
             break
-        mouser_log()
+        clock_display(loop_num = 1500)
+        if finish_auto == 1:
+            finish_auto = 0
+            display.flatPosition()
+            break
+        run_life_game(gen = 100)
         if finish_auto == 1:
             finish_auto = 0
             display.flatPosition()
             break
         wave_tan(wave = 300)
+        if finish_auto == 1:
+            finish_auto = 0
+            display.flatPosition()
+            break
+        camera()
         if finish_auto == 1:
             finish_auto = 0
             display.flatPosition()
@@ -1128,19 +1184,17 @@ while True:
         if received_message == 8:
             finish_auto = 0
             auto()
-            
         if received_message == 9:
             time.sleep_ms(5000)
             display.maxPosition()
-            color_test()
             time.sleep_ms(100)
             display.release()
-            
         if received_message == 10:
             display.minPosition()
-
             time.sleep_ms(100)
-            display.release()        
+            display.release()
+        if received_message == 11:
+            color_test()
 #display.maxPosition()
 #time.sleep_ms(5000)
 #display.flatPosition()
