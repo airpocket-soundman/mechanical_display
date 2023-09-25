@@ -1045,14 +1045,14 @@ def uart_read_img_list2():
 
                 
 
-def camera(frame = 300):
+def camera():
     global finish_auto
-    for i in range(frame):
-#    while True:
+    print("camera-")
+    while True:
         if uart.any():
             received_message = uart_read_int()
             print("mes=",received_message)
-            if received_message == 1:
+            if received_message == 2:
                 while uart.any():
                      image = uart_read_img_list2()
                      print("image = ",image)
@@ -1092,11 +1092,6 @@ def auto():
             display.flatPosition()
             break
         wave_tan(wave = 300)
-        if finish_auto == 1:
-            finish_auto = 0
-            display.flatPosition()
-            break
-        camera()
         if finish_auto == 1:
             finish_auto = 0
             display.flatPosition()
@@ -1161,7 +1156,7 @@ while True:
     
     if uart.any():
         received_message = uart_read_int()
-        print(received_message)
+        print("menu = ",received_message)
         if received_message == 0:
             display.flatPosition()
             time.sleep_ms(100)
@@ -1169,6 +1164,7 @@ while True:
         if received_message == 1:
             print("camera")
             camera()
+
         if received_message == 2:
             print("clock")
             clock_display(loop_num = 1000)

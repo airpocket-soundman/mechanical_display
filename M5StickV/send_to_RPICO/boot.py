@@ -57,13 +57,13 @@ def CAMERA():
     global camera_image
     lcd.direction(lcd.YX_LRDU)
     print("camera1")
-
+    #time.sleep_ms(1000)
     while True:
         camera_image = sensor.snapshot()         # Take a picture and return the image.
         camera_image = camera_image.copy((20,0,140,120))
         lcd.display(camera_image)
         camera_image = camera_image.resize(pixel_layout[0], pixel_layout[1])
-        uart.write(bytes([1]))
+        uart.write(bytes([2]))
         image_list = []
         for x in range(pixel_layout[0]):
             listy = []
@@ -124,7 +124,6 @@ while True:
             menu = 0
         print("change to ",menu)
         display_menu()
-        time.sleep_ms(200)
         but_b_pressed=1
 
     if but_b.value() == 1 and but_b_pressed == 1:

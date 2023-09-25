@@ -124,7 +124,7 @@ while True:
             menu = 0
         print("change to ",menu)
         display_menu()
-        time.sleep_ms(200)
+        time.sleep_ms(50)
         but_b_pressed=1
 
     if but_b.value() == 1 and but_b_pressed == 1:
@@ -133,7 +133,6 @@ while True:
 
     if but_a.value() == 0 and but_a_pressed == 0:
         #print("A_push")
-        time.sleep_ms(200)
         but_a_pressed=1
 
         lcd.draw_string(30,40, menu_list[menu], lcd.BLACK, lcd.RED)
