@@ -194,8 +194,6 @@ class mechanical_display:
             for x in range(self.pixel_layout[0]):
                 if img[x][y] != self.old_image[x][y]:
                     self.setPixel([x,y],img[x][y])
-                else:
-                    time.sleep_us(500)
 
 # 単ピクセルを表示する 座標指定なしの場合、全ピクセル。色指定なしの場合release
 
@@ -296,7 +294,7 @@ class mechanical_display:
         return bg_image
 
 # bg_imageにtext_imageを合成する
-    def textOverlay(self, bg_image = 5, text_image =2,offset = [0,0], text_color = None, transparent = True):
+    def textOverlay(self, bg_image, text_image ,offset = [0,0], text_color = None, transparent = True):
         if text_color == None:
             text_color = self.gray_scale_color -1
         text_size = [len(text_image), len(text_image[0])]
@@ -310,9 +308,10 @@ class mechanical_display:
                         if transparent == False:
                             image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
                         else:
+                            print(x,y,text_image[x][y])
                             if text_image[x][y] == 1:
                                 image[x + offset[0]][y + offset[1]] = text_image[x][y] * text_color
-        #print(image)
+        print(image)
         return image
 
 #コマ間を補完するメソッド
@@ -342,31 +341,6 @@ class mechanical_display:
 
 #=======================================================================================================================
 
-#ボタン設定
-#fm.register(board_info.BUTTON_A, fm.fpioa.GPIO1)
-#button_a = GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
-#fm.register(board_info.BUTTON_B, fm.fpioa.GPIO2)
-#button_b = GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
-
-"""
-#LCD設定
-lcd.init(freq=15000000)
-lcd.direction(lcd.YX_LRDU)
-
-#カメラ設定
-sensor.reset()                      # Reset and initialize the sensor. It will
-                                    # run automatically, call sensor.run(0) to stop
-sensor.set_pixformat(sensor.GRAYSCALE) # Set pixel format to RGB565 (or GRAYSCALE)
-sensor.set_framesize(sensor.QQVGA)   # Set frame size to QVGA (320x240) QQVGA (160x120)
-sensor.skip_frames(time = 2000)     # Wait for settings take effect.
-sensor.set_contrast(+2)             # Contrast +2 to -2
-#sensor.set_brightness(-2)           # Brightness +2 to -2
-#sensor.set_saturation(-2)           # Saturation +2 to -2
-sensor.set_auto_gain(0,20)           # enable,gain_db enable=1:auto,0:off
-#sensor.set_vflip(1)                 # 1:enable 0:disable
-sensor.set_hmirror(1)                 # 1:enable 0:disable
-
-"""
 
 #displayのUnit配置数定義
 unit_layout  = [4, 4]          #[width,height]　現在は[4,4]まで対応。増やす際は、I2Cのaddressリストも修正が必要。
@@ -398,39 +372,212 @@ time.sleep_ms(300)
 
 
 
-#=====================================================================================================
-#RTCのインスタンスを生成
-ds = ds3231.DS3231(i2c0)
 
+# テキスト表示テスト
+base_color = 50
+text_color = 200
+
+time.sleep_ms(10000)
+
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],text_color)
+    time.sleep_ms(100)
+
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],base_color)
+    time.sleep_ms(100)
+
+time.sleep_ms(1000)
+
+
+# テキストイメージ表示
+text_image = Font.genTextImage(text = "3",font = "propotional")
+bg_image = display.bg_image_generate(200)
+image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
+display.setImage(image)
+time.sleep_ms(1000)
+
+text_image = Font.genTextImage(text = "2",font = "propotional")
+bg_image = display.bg_image_generate(200)
+image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
+display.setImage(image)
+time.sleep_ms(1000)
+
+text_image = Font.genTextImage(text = "1",font = "propotional")
+bg_image = display.bg_image_generate(200)
+image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
+display.setImage(image)
+time.sleep_ms(1000)
+
+text_image = Font.genTextImage(text = " ",font = "propotional")
+bg_image = display.bg_image_generate(200)
+image = display.textOverlay(bg_image, text_image, offset = [0,0],text_color = 50, transparent = True)
+display.setImage(image)
+time.sleep_ms(1000)
+
+
+
+#"""
+# テキストイメージスクロール表示 Mouser
+#time.sleep_ms(5000)
+base_color = 50
+text_color = 200
+
+ss = 1
+ds = 0
+
+mouser_logo_image = [[ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss],
+                     [ss,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ss],
+                     [ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds],
+                     [ds,ds,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ds,ds],
+                     [ds,ds,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ds,ds],
+                     [ds,ds,ss,ss, ss,ss,ss,ds, ds,ds,ds,ds, ds,ds,ds,ds],
+                     [ds,ds,ds,ds, ds,ss,ss,ss, ss,ss,ds,ds, ds,ds,ds,ds],
+                     [ds,ds,ds,ds, ds,ds,ds,ss, ss,ss,ss,ss, ds,ds,ds,ds],
+                     [ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ss,ss, ss,ss,ds,ds],
+                     [ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ss,ss, ss,ss,ds,ds],
+                     [ds,ds,ds,ds, ds,ds,ds,ss, ss,ss,ss,ss, ds,ds,ds,ds],
+                     [ds,ds,ds,ds, ds,ss,ss,ss, ss,ss,ds,ds, ds,ds,ds,ds],
+                     [ds,ds,ss,ss, ss,ss,ss,ds, ds,ds,ds,ds, ds,ds,ds,ds],
+                     [ds,ds,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ds,ds],
+                     [ds,ds,ss,ss, ss,ss,ss,ss, ss,ss,ss,ss, ss,ss,ds,ds],
+                     [ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds],
+                     [ss,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ds, ds,ds,ds,ss]]
+
+
+# for mouser
+print("mouser")
+stop_counter = 17
+counter = 0
+bg_image = display.bg_image_generate(base_color)
+for x in range(len(mouser_logo_image)+1):
+    if counter == stop_counter:
+        time.sleep_ms(5000)
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, mouser_logo_image, offset = [-x, 0], text_color = text_color, transparent = True)
+    display.setImage(image)
+    counter += 1
+
+time.sleep_ms(1000)
+
+text_image = Font.genTextImage(text = "        MOUSER MAKE AWARDS 2023    Mechanical Display",font = "propotional")
+bg_image = display.bg_image_generate(base_color)
+print(text_image)
+for x in range(len(text_image)):
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
+#    print("image", x)
+    display.setImage(image)
+    time.sleep_ms(200)
+
+time.sleep_ms(200)
+
+text_image = Font.genTextImage(text = "        MECHANICAL DISPLAY  8BIT GRAY SCALE VERSION :-)",font = "propotional")
+bg_image = display.bg_image_generate(base_color)
+print(text_image)
+for x in range(len(text_image)):
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
+#    print("image", x)
+    display.setImage(image)
+    time.sleep_ms(200)
+
+time.sleep_ms(5000)
+
+
+# for snacks
+
+print("snacks")
+text_image = Font.genTextImage(text = "        SNACKS Vol.5 (>_0)",font = "propotional")
+bg_image = display.bg_image_generate(base_color)
+print(text_image)
+for x in range(len(text_image)):
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
+#    print("image", x)
+    display.setImage(image)
+    time.sleep_ms(200)
+
+time.sleep_ms(200)
 """
-#RTCの時間設定
-year    = 2023 # Can be yyyy or yy format
-month   = 7
-mday    = 4
-hour    = 15 # 24 hour format only
-minute  = 28
-second  = 30 # Optional
-weekday = 2 # Optional
-
-datetime = (year, month, mday, hour, minute, second, weekday)
-ds.datetime(datetime)
-print(ds.datetime())
+text_image = Font.genTextImage(text = "        MECHANICAL DISPLAY  8BIT GRAY SCALE VERSION :-)",font = "propotional")
+bg_image = display.bg_image_generate(base_color)
+print(text_image)
+for x in range(len(text_image)):
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
+#    print("image", x)
+    display.setImage(image)
+    time.sleep_ms(200)
 """
+time.sleep_ms(5000)
 
-#現在時刻をRTCから読み取って表示
-year    = ds.datetime()[0]
-month   = ds.datetime()[1]
-day     = ds.datetime()[2]
-hour    = ds.datetime()[4]
-minute  = ds.datetime()[5]
-second  = ds.datetime()[6]
-print(year, month, day, hour, minute, second)
+# for hackaday
 
-display.minPosition()
-time.sleep_ms(500)
+text_image = Font.genTextImage(text = "        HACKADAY PRIZE 2023",font = "propotional")
+bg_image = display.bg_image_generate(base_color)
+print(text_image)
+for x in range(len(text_image)):
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 2], text_color = text_color, transparent = True)
+#    print("image", x)
+    display.setImage(image)
+    time.sleep_ms(200)
 
-display.flatPosition()
-#time.sleep_ms(1000)
-#clock_display()
+time.sleep_ms(200)
+
+text_image = Font.genTextImage(text = "        MECHANICAL DISPLAY  8BIT GRAY SCALE VERSION.",font = "propotional")
+bg_image = display.bg_image_generate(base_color)
+print(text_image)
+for x in range(len(text_image)):
+    bg_image = display.bg_image_generate(base_color)
+    image = display.textOverlay(bg_image, text_image, offset = [-x, 9], text_color = text_color, transparent = True)
+#    print("image", x)
+    display.setImage(image)
+    time.sleep_ms(200)
+
+
+time.sleep_ms(5000)
+
+
+#color flash
+
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],base_color)
+    time.sleep_ms(100)
+
+time.sleep_ms(5000)
+
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],text_color)
+    time.sleep_ms(100)
+
+for y in range(pixel_layout[1]):
+    for x in range(pixel_layout[0]):
+        display.setPixel([x, y],base_color)
+    time.sleep_ms(100)
+
+#display.flatPosition()
+time.sleep_ms(1000)
+#sec_display()
 
 display.release()
